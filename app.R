@@ -24,9 +24,6 @@ temp = list.files(pattern="*.tsv")
 allData2 <- lapply(temp, read.delim)
 allData3 <- do.call(rbind, allData2)
 
-# some of the temperature readings are 32 (invalid value) so lets remove any row that has one of those
-allData <- subset(allData3, S1 != "32" & S2 != "32" & S3 != "32" & S4 != "32" & S5 != "32" & S6 != "32" & S7 != "32" )
-
 
 # convert the dates to the internal format
 allData$newDate <- as.Date(allData$Date, "%m/%d/%Y")
