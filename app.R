@@ -58,7 +58,6 @@ uic_data <- data.frame(allData)
 
 # parse data only for UIC-Halsted stop
 uic_data_df <- uic_data[uic_data$stationname == "UIC-Halsted",]
-uic_data_df_year <- uic_data_df
 
 
 # Create the shiny application
@@ -66,6 +65,7 @@ ui <- fluidPage(
   titlePanel("CTA Data Visualization"),
   sidebarLayout(position = "left",
     sidebarPanel(
+      style = "margin-top:150px;",
       fluidRow(
         column(6, 
                div(checkboxGroupInput("uic_stop_checkbox",
@@ -96,6 +96,16 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
+  # create reactive variable
+  uic_df_Reactive <- reactive({
+    # create dataframe for a specific year
+    if (input$select_year != "All") {
+      uic_data[uic_data$year == input$select_year,]
+    } else {
+      uic_data
+    }
+  })
+  
   # create graph to show yearly data
   output$UIC_entries_year <- renderPlot({
     ggplot(data = uic_data_df, aes(x = year, y = rides)) + 
@@ -109,17 +119,9 @@ server <- function(input, output) {
   
   # create graph to show monthly data
   output$UIC_entries_month <- renderPlot({
-    
-    # create dataframe for a specific year
-    if (input$select_year != "All") {
-      uic_data_df_year <- uic_data[uic_data$year == input$select_year,]
-    } else {
-      uic_data_df_year <- uic_data
-    }
-    
-    ggplot(data = uic_data_df_year, aes(x = reorder(monthChar, month), y = rides)) + 
+    ggplot(data = uic_df_Reactive(), aes(x = reorder(monthChar, month), y = rides)) + 
       geom_bar(stat = "identity") +
-      scale_y_continuous(labels = comma) +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
       ggtitle("Monthly Entries at UIC-Halsted CTA Station")
@@ -127,20 +129,12 @@ server <- function(input, output) {
   
   # create graph to show weekly data
   output$UIC_entries_week <- renderPlot({
-    
-    # create dataframe for a specific year
-    if (input$select_year != "All") {
-      uic_data_df_year <- uic_data[uic_data$year == input$select_year,]
-    } else {
-      uic_data_df_year <- uic_data
-    }
-    
-    ggplot(data = uic_data_df_year, aes(x = reorder(dayChar, day), y = rides)) + 
-      geom_bar(stat = "identity") +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
-      labs(x = "Day",
-           y = "Entries") +
-      ggtitle("Day of the week Entries at UIC-Halsted CTA Station")
+    ggplot(data = uic_df_Reactive(), aes(x = reorder(dayChar, day), y = rides)) + 
+        geom_bar(stat = "identity") +
+        scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+        labs(x = "Day",
+             y = "Entries") +
+        ggtitle("Day of the week Entries at UIC-Halsted CTA Station")
   })
   
   # render UI
