@@ -1,22 +1,13 @@
 #libraries to include
 
-library(shiny)
-library(shinydashboard)
 library(ggplot2)
 library(lubridate)
-library(DT)
-library(jpeg)
-library(grid)
-library(leaflet)
 library(scales)
 library(tidyr)
 
 
 # assume all of the tsv files in this directory are data of the same kind that I want to visualize
-temp = list.files(pattern = "*.tsv")
-allData2 <- lapply(temp, read.delim)
-allData3 <- do.call(rbind, allData2)
-allData <- allData3
+allData <- do.call(rbind, lapply(list.files(pattern = "*.tsv"), read.delim))
 
 # convert the dates to the internal format
 allData$fullDate <- allData$date
@@ -67,6 +58,7 @@ uic_data <- data.frame(allData)
 
 # parse data only for UIC-Halsted stop
 uic_data_df <- uic_data[uic_data$stationname == "UIC-Halsted",]
+uic_data_df_year <- uic_data_df
 
 
 # Create the shiny application
@@ -74,10 +66,25 @@ ui <- fluidPage(
   titlePanel("CTA Data Visualization"),
   sidebarLayout(position = "left",
     sidebarPanel(
-       checkboxGroupInput("uic_stop_checkbox", 
-                          "Time Frame", 
-                          choices = c("Year", "Month", "Week"),
-                          selected = c("Year", "Month", "Week")),
+      fluidRow(
+        column(6, 
+               div(checkboxGroupInput("uic_stop_checkbox",
+                                      "Time Frame",
+                                      choices = c("Year", "Month", "Week"),
+                                      selected = c("Year", "Month", "Week")
+                                      )
+                   
+                   )
+               ),
+        column(6, 
+               div(selectInput("select_year",
+                               "Year",
+                               choices = c("All", 2021:2001),
+                               selected = c(2021)
+                               )
+                   )
+               )
+      ),
        width = 2
     ),
     mainPanel(
@@ -102,7 +109,15 @@ server <- function(input, output) {
   
   # create graph to show monthly data
   output$UIC_entries_month <- renderPlot({
-    ggplot(data = uic_data_df, aes(x = reorder(monthChar, month), y = rides)) + 
+    
+    # create dataframe for a specific year
+    if (input$select_year != "All") {
+      uic_data_df_year <- uic_data[uic_data$year == input$select_year,]
+    } else {
+      uic_data_df_year <- uic_data
+    }
+    
+    ggplot(data = uic_data_df_year, aes(x = reorder(monthChar, month), y = rides)) + 
       geom_bar(stat = "identity") +
       scale_y_continuous(labels = comma) +
       labs(x = "Month",
@@ -112,7 +127,15 @@ server <- function(input, output) {
   
   # create graph to show weekly data
   output$UIC_entries_week <- renderPlot({
-    ggplot(data = uic_data_df, aes(x = reorder(dayChar, day), y = rides)) + 
+    
+    # create dataframe for a specific year
+    if (input$select_year != "All") {
+      uic_data_df_year <- uic_data[uic_data$year == input$select_year,]
+    } else {
+      uic_data_df_year <- uic_data
+    }
+    
+    ggplot(data = uic_data_df_year, aes(x = reorder(dayChar, day), y = rides)) + 
       geom_bar(stat = "identity") +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Day",
