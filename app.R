@@ -65,7 +65,7 @@ ui <- fluidPage(
   titlePanel("CTA Data Visualization"),
   sidebarLayout(position = "left",
     sidebarPanel(
-      style = "margin-top:150px;",
+      style = "margin-top:70%;",
       fluidRow(
         column(6, 
                div(checkboxGroupInput("uic_stop_checkbox",
@@ -95,6 +95,51 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+  
+  # get column values reactive
+  get_col_reactive <- reactive({
+    year_col <- 0
+    month_col <- 0
+    week_col <- 0
+    
+    # decide how much space is required for each graph based on what is visible
+    if (all(c("Year", "Month", "Week") %in% input$uic_stop_checkbox)) {
+      year_col <- 4
+      month_col <- 4
+      week_col <- 4
+    } else if (all(c("Month", "Week") %in% input$uic_stop_checkbox)) {
+      year_col <- 0
+      month_col <- 6
+      week_col <- 6
+      
+    } else if (all(c("Year", "Week") %in% input$uic_stop_checkbox)) {
+      year_col <- 6
+      month_col <- 0
+      week_col <- 6
+      
+    } else if (all(c("Year", "Month") %in% input$uic_stop_checkbox)) {
+      year_col <- 6
+      month_col <- 6
+      week_col <- 0
+      
+    } else if (all(c("Year") %in% input$uic_stop_checkbox)) {
+      year_col <- 12
+      month_col <- 0
+      week_col <- 0
+      
+    } else if (all(c("Month") %in% input$uic_stop_checkbox)) {
+      year_col <- 0
+      month_col <- 12
+      week_col <- 0
+      
+    } else if (all(c("Week") %in% input$uic_stop_checkbox)) {
+      year_col <- 0
+      month_col <- 0
+      week_col <- 12
+    }
+    
+    return(list(year_col, month_col, week_col))
+  })
   
   # create reactive variable
   uic_df_Reactive <- reactive({
@@ -143,58 +188,20 @@ server <- function(input, output) {
       need(input$uic_stop_checkbox, 'Check at least one Time Frame!')
     )
     
-    year_col <- 0
-    month_col <- 0
-    week_col <- 0
-    
-    # decide how much space is required for each graph based on what is visible
-    if (all(c("Year", "Month", "Week") %in% input$uic_stop_checkbox)) {
-      year_col <- 4
-      month_col <- 4
-      week_col <- 4
-    } else if (all(c("Month", "Week") %in% input$uic_stop_checkbox)) {
-      year_col <- 0
-      month_col <- 6
-      week_col <- 6
-      
-    } else if (all(c("Year", "Week") %in% input$uic_stop_checkbox)) {
-      year_col <- 6
-      month_col <- 0
-      week_col <- 6
-      
-    } else if (all(c("Year", "Month") %in% input$uic_stop_checkbox)) {
-      year_col <- 6
-      month_col <- 6
-      week_col <- 0
-      
-    } else if (all(c("Year") %in% input$uic_stop_checkbox)) {
-      year_col <- 12
-      month_col <- 0
-      week_col <- 0
-      
-    } else if (all(c("Month") %in% input$uic_stop_checkbox)) {
-      year_col <- 0
-      month_col <- 12
-      week_col <- 0
-      
-    } else if (all(c("Week") %in% input$uic_stop_checkbox)) {
-      year_col <- 0
-      month_col <- 0
-      week_col <- 12
-    }
+    col_val_reactive <- get_col_reactive()
     
     # put three plots in a row
     fluidRow(
-      if (year_col != 0) {
-        column(year_col, div(plotOutput("UIC_entries_year")))
+      if (as.integer(col_val_reactive[1]) != 0) {
+        column(as.integer(col_val_reactive[1]), div(plotOutput("UIC_entries_year")))
       },
       
-      if (month_col != 0) {
-        column(month_col, div(plotOutput("UIC_entries_month")))
+      if (as.integer(col_val_reactive[2]) != 0) {
+        column(as.integer(col_val_reactive[2]), div(plotOutput("UIC_entries_month")))
       },
       
-      if (week_col != 0) {
-        column(week_col, div(plotOutput("UIC_entries_week")))
+      if (as.integer(col_val_reactive[3]) != 0) {
+        column(as.integer(col_val_reactive[3]), div(plotOutput("UIC_entries_week")))
       }
     )
   })
