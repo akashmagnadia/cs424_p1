@@ -208,31 +208,39 @@ server <- function(input, output) {
   
   # create new Data frame to show yearly data
   UIC_entries_year_table <- reactive({
+    # keep only following columns
     keep <- c("stationname", "year", "ridesChar")
-    uic_df_Reactive()[keep]
+    temp_df <- uic_df_Reactive()[keep]
+    
+    # rename
+    names(temp_df)[1] <- "Station"
+    names(temp_df)[2] <- "Year"
+    names(temp_df)[3] <- "Entries"
+    
+    temp_df
   })
   
   # create a data table to show yearly data
   output$UIC_entries_year_table <- renderUI({
-    # uic_data_df
+    # format the table layout
     div(
     tags$head(
       tags$style(
         HTML('
-                     .datatables {
-                     width: inherit !important;
-                     }
-                          ')
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
       )
     ),
     
     datatable(
       UIC_entries_year_table(),
       options = list(
-        pageLength = 10,
+        pageLength = 8,
         scrollX = TRUE,
-        scrollY = TRUE,
-        dom = 't'
+        dom = 'tp'
       )
     )
     )
