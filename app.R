@@ -6,8 +6,8 @@ library(shinydashboard)
 library(ggplot2)
 library(lubridate)
 library(scales)
-library(tidyr)
 library(DT)
+library(tidyr)
 
 
 # assume all of the tsv files in this directory are data of the same kind that I want to visualize
@@ -94,15 +94,21 @@ ui <- dashboardPage(
                                        
                                        )
                                 ),
-                                column(6, 
+                                column(6,
                                        div(selectInput("select_year",
                                                        "Year",
                                                        choices = c("All", 2021:2001),
                                                        selected = c(2021)
+                                                       )
+                                           )
                                        )
-                                       )
-                                )
-                              ),
+                                ),
+                              div(selectInput("select_station",
+                                              "Station",
+                                              choices = c("UIC-Halsted", "O'Hare Airport", "Rosemont"),
+                                              selected = c("UIC-Halsted")
+                                              )
+                                  ),
                               width = 2
                             ),
                             mainPanel(
@@ -220,6 +226,48 @@ server <- function(input, output) {
     temp_df
   })
   
+  # create new Data frame to show monthly data
+  UIC_entries_year_table <- reactive({
+    # keep only following columns
+    keep <- c("stationname", "year", "ridesChar")
+    temp_df <- uic_df_Reactive()[keep]
+    
+    # rename
+    names(temp_df)[1] <- "Station"
+    names(temp_df)[2] <- "Month"
+    names(temp_df)[3] <- "Entries"
+    
+    temp_df
+  })
+  
+  # create new Data frame to show monthly data
+  UIC_entries_month_table <- reactive({
+    # keep only following columns
+    keep <- c("stationname", "monthChar", "ridesChar")
+    temp_df <- uic_df_Reactive()[keep]
+    
+    # rename
+    names(temp_df)[1] <- "Station"
+    names(temp_df)[2] <- "Month"
+    names(temp_df)[3] <- "Entries"
+    
+    temp_df
+  })
+  
+  # create new Data frame to show weekly data
+  UIC_entries_week_table <- reactive({
+    # keep only following columns
+    keep <- c("stationname", "dayChar", "ridesChar")
+    temp_df <- uic_df_Reactive()[keep]
+    
+    # rename
+    names(temp_df)[1] <- "Station"
+    names(temp_df)[2] <- "Day of Week"
+    names(temp_df)[3] <- "Entries"
+    
+    temp_df
+  })
+  
   # create a data table to show yearly data
   output$UIC_entries_year_table <- renderUI({
     # format the table layout
@@ -247,8 +295,55 @@ server <- function(input, output) {
   })
   
   # create a data table to show monthly data
-  output$UIC_entries_month_table <- renderDataTable({
-    uic_df_Reactive()
+  output$UIC_entries_month_table <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        UIC_entries_month_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp'
+        )
+      )
+    )
+  })
+  
+  # create a data table to show weekly data
+  output$UIC_entries_week_table <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        UIC_entries_week_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp'
+        )
+      )
+    )
   })
   
   # render UI
@@ -271,12 +366,15 @@ server <- function(input, output) {
       if (as.integer(col_val_reactive[2]) != 0) {
         column(as.integer(col_val_reactive[2]), 
                div(plotOutput("UIC_entries_month_graph")),
-               # div(dataTableOutput("UIC_entries_month_table"))
+               uiOutput("UIC_entries_month_table")
                )
       },
       
       if (as.integer(col_val_reactive[3]) != 0) {
-        column(as.integer(col_val_reactive[3]), div(plotOutput("UIC_entries_week")))
+        column(as.integer(col_val_reactive[3]), 
+               div(plotOutput("UIC_entries_week")),
+               uiOutput("UIC_entries_week_table")
+               )
       }
     )
   })
