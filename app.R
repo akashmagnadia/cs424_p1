@@ -1,9 +1,13 @@
 #libraries to include
 
+library(shiny)
+library(shinyWidgets)
+library(shinydashboard)
 library(ggplot2)
 library(lubridate)
 library(scales)
 library(tidyr)
+library(DT)
 
 
 # assume all of the tsv files in this directory are data of the same kind that I want to visualize
@@ -61,38 +65,58 @@ uic_data_df <- uic_data[uic_data$stationname == "UIC-Halsted",]
 
 
 # Create the shiny application
-ui <- fluidPage(
-  titlePanel("CTA Data Visualization"),
-  sidebarLayout(position = "left",
-    sidebarPanel(
-      style = "margin-top:70%;",
-      fluidRow(
-        column(6, 
-               div(checkboxGroupInput("uic_stop_checkbox",
-                                      "Time Frame",
-                                      choices = c("Year", "Month", "Week"),
-                                      selected = c("Year", "Month", "Week")
-                                      )
-                   
+ui <- dashboardPage(
+  dashboardHeader(title = "CTA Data Visualization"),
+  dashboardSidebar(disable = FALSE, collapsed = FALSE,
+                   sidebarMenu(
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("About", tabName = "About"),
+                     menuItem("Compare with table", tabName = "compare_table")
                    )
-               ),
-        column(6, 
-               div(selectInput("select_year",
-                               "Year",
-                               choices = c("All", 2021:2001),
-                               selected = c(2021)
-                               )
-                   )
-               )
-      ),
-       width = 2
     ),
-    mainPanel(
-      uiOutput("UIC_plots"),
-      width = 10
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "compare_table",
+              sidebarLayout(position = "left",
+                            sidebarPanel(
+                              style = "margin-top:70%;",
+                              fluidRow(
+                                column(6, 
+                                       div(checkboxGroupInput("uic_stop_checkbox",
+                                                              "Time Frame",
+                                                              choices = c("Year", "Month", "Week"),
+                                                              selected = c("Year", "Month", "Week")
+                                       )
+                                       
+                                       )
+                                ),
+                                column(6, 
+                                       div(selectInput("select_year",
+                                                       "Year",
+                                                       choices = c("All", 2021:2001),
+                                                       selected = c(2021)
+                                       )
+                                       )
+                                )
+                              ),
+                              width = 2
+                            ),
+                            mainPanel(
+                              uiOutput("UIC_plots"),
+                              width = 10
+                              )
+                            )
+              ),
+      tabItem(tabName = "About",
+              h2("US Data")
+              )
+      )
     )
   )
-)
 
 server <- function(input, output) {
   
@@ -145,14 +169,14 @@ server <- function(input, output) {
   uic_df_Reactive <- reactive({
     # create dataframe for a specific year
     if (input$select_year != "All") {
-      uic_data[uic_data$year == input$select_year,]
+      uic_data_df[uic_data_df$year == input$select_year,]
     } else {
-      uic_data
+      uic_data_df
     }
   })
   
   # create graph to show yearly data
-  output$UIC_entries_year <- renderPlot({
+  output$UIC_entries_year_graph <- renderPlot({
     ggplot(data = uic_data_df, aes(x = year, y = rides)) + 
       geom_bar(stat = "identity") +
       scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
@@ -163,7 +187,7 @@ server <- function(input, output) {
   })
   
   # create graph to show monthly data
-  output$UIC_entries_month <- renderPlot({
+  output$UIC_entries_month_graph <- renderPlot({
     ggplot(data = uic_df_Reactive(), aes(x = reorder(monthChar, month), y = rides)) + 
       geom_bar(stat = "identity") +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
@@ -182,6 +206,43 @@ server <- function(input, output) {
         ggtitle("Day of the week Entries at UIC-Halsted CTA Station")
   })
   
+  # create new Data frame to show yearly data
+  UIC_entries_year_table <- reactive({
+    keep <- c("stationname", "year", "ridesChar")
+    uic_df_Reactive()[keep]
+  })
+  
+  # create a data table to show yearly data
+  output$UIC_entries_year_table <- renderUI({
+    # uic_data_df
+    div(
+    tags$head(
+      tags$style(
+        HTML('
+                     .datatables {
+                     width: inherit !important;
+                     }
+                          ')
+      )
+    ),
+    
+    datatable(
+      UIC_entries_year_table(),
+      options = list(
+        pageLength = 10,
+        scrollX = TRUE,
+        scrollY = TRUE,
+        dom = 't'
+      )
+    )
+    )
+  })
+  
+  # create a data table to show monthly data
+  output$UIC_entries_month_table <- renderDataTable({
+    uic_df_Reactive()
+  })
+  
   # render UI
   output$UIC_plots <- renderUI({
     validate(
@@ -193,17 +254,33 @@ server <- function(input, output) {
     # put three plots in a row
     fluidRow(
       if (as.integer(col_val_reactive[1]) != 0) {
-        column(as.integer(col_val_reactive[1]), div(plotOutput("UIC_entries_year")))
+        column(as.integer(col_val_reactive[1]), 
+               div(plotOutput("UIC_entries_year_graph")),
+               uiOutput("UIC_entries_year_table")
+               )
       },
       
       if (as.integer(col_val_reactive[2]) != 0) {
-        column(as.integer(col_val_reactive[2]), div(plotOutput("UIC_entries_month")))
+        column(as.integer(col_val_reactive[2]), 
+               div(plotOutput("UIC_entries_month_graph")),
+               # div(dataTableOutput("UIC_entries_month_table"))
+               )
       },
       
       if (as.integer(col_val_reactive[3]) != 0) {
         column(as.integer(col_val_reactive[3]), div(plotOutput("UIC_entries_week")))
       }
     )
+  })
+  
+  # test
+  output$plot2 <- renderPlot({
+    ggplot(data = uic_df_Reactive(), aes(x = reorder(dayChar, day), y = rides)) + 
+      geom_bar(stat = "identity") +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Day",
+           y = "Entries") +
+      ggtitle("Day of the week Entries at UIC-Halsted CTA Station")
   })
 }
 
