@@ -8,6 +8,7 @@ library(lubridate)
 library(scales)
 library(DT)
 library(tidyr)
+library(tidyverse)
 
 
 # assume all of the tsv files in this directory are data of the same kind that I want to visualize
@@ -384,7 +385,7 @@ server <- function(input, output) {
   # create reactive dataframe for month and week
   df_Reactive_year_1 <- reactive({
     if (input$select_station_1 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station)
+      subset(all_data_df, all_data_df$stationname == input$select_station_1)
     } else {
       all_data_df
     }
@@ -392,7 +393,7 @@ server <- function(input, output) {
   
   df_Reactive_year_2 <- reactive({
     if (input$select_station_2 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station)
+      subset(all_data_df, all_data_df$stationname == input$select_station_2)
     } else {
       all_data_df
     }
@@ -400,7 +401,7 @@ server <- function(input, output) {
   
   df_Reactive_year_3 <- reactive({
     if (input$select_station_3 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station)
+      subset(all_data_df, all_data_df$stationname == input$select_station_3)
     } else {
       all_data_df
     }
@@ -416,7 +417,11 @@ server <- function(input, output) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_1, "CTA Station"))
+      ggtitle(paste("Yearly Entries at", input$select_station_1, "CTA Station")) +
+      geom_col(aes(fill = rides)) +
+      scale_fill_gradient2(low = "white", 
+                           high = "red", 
+                           midpoint = median(0))
   })
   
   output$entries_year_graph_2 <- renderPlot({
@@ -426,17 +431,21 @@ server <- function(input, output) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station"))
+      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station")) +
+      geom_col(aes(fill = rides))
   })
   
   output$entries_year_graph_3 <- renderPlot({
     ggplot(data = df_Reactive_year_3(), aes(x = year, y = rides)) + 
-      geom_bar(stat = "identity") +
+      geom_bar(stat = 'identity', aes(fill = rides)) +
       scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station"))
+      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station")) +
+      scale_fill_gradient2(low = "white", 
+                           high = "red", 
+                           midpoint = median(0))
   })
   
   #################################################################
