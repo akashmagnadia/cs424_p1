@@ -72,7 +72,8 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
-                     menuItem("Compare with table", tabName = "compare_table", selected = T)
+                     menuItem("Graph and Table", tabName = "compare_table"),
+                     menuItem("Two Graphs", tabName = "compare_graph", selected = T)
                    )
     ),
   dashboardBody(
@@ -83,7 +84,7 @@ ui <- dashboardPage(
                               style = "margin-top:70%;",
                               fluidRow(
                                 column(6, 
-                                       div(checkboxGroupInput("time_frame",
+                                       div(checkboxGroupInput("time_frame_1",
                                                               "Time Frame",
                                                               choices = c("Year", "Month", "Week"),
                                                               selected = c("Year", "Month", "Week")
@@ -92,7 +93,7 @@ ui <- dashboardPage(
                                        )
                                 ),
                                 column(6,
-                                       div(selectInput("select_year",
+                                       div(selectInput("select_year_1",
                                                        "Year",
                                                        choices = c("Every", 2021:2001),
                                                        selected = c(2021)
@@ -100,7 +101,7 @@ ui <- dashboardPage(
                                            )
                                        )
                                 ),
-                              div(selectInput("select_station",
+                              div(selectInput("select_station_1",
                                               "Station",
                                               choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
                                               selected = c("UIC-Halsted")
@@ -109,11 +110,74 @@ ui <- dashboardPage(
                               width = 2
                             ),
                             mainPanel(
-                              uiOutput("plots"),
+                              uiOutput("plot_and_table"),
                               width = 10
                               )
                             )
               ),
+      tabItem(tabName = "compare_graph",
+              sidebarLayout(position = "left",
+                            sidebarPanel(
+                              style = "margin-top:70%;",
+                              h2("Top Plot(s)"),
+                              fluidRow(
+                                column(6, 
+                                       div(checkboxGroupInput("time_frame_2",
+                                                              "Time Frame",
+                                                              choices = c("Year", "Month", "Week"),
+                                                              selected = c("Year", "Month", "Week")
+                                                              )
+                                           )
+                                       ),
+                                column(6,
+                                       div(selectInput("select_year_2",
+                                                       "Year",
+                                                       choices = c("Every", 2021:2001),
+                                                       selected = c(2021)
+                                                       )
+                                           )
+                                       )
+                                ),
+                              div(selectInput("select_station_2",
+                                              "Station",
+                                              choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
+                                              selected = c("UIC-Halsted")
+                                              )
+                                  ),
+                              h2("Bottom Plot(s)"),
+                              fluidRow(
+                                column(6, 
+                                       div(checkboxGroupInput("time_frame_3",
+                                                              "Time Frame",
+                                                              choices = c("Year", "Month", "Week"),
+                                                              selected = c("Year", "Month", "Week")
+                                                              )
+                                           )
+                                       ),
+                                column(6,
+                                       div(selectInput("select_year_3",
+                                                       "Year",
+                                                       choices = c("Every", 2021:2001),
+                                                       selected = c(2021)
+                                                       )
+                                           )
+                                       )
+                                ),
+                              div(selectInput("select_station_3",
+                                              "Station",
+                                              choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
+                                              selected = c("UIC-Halsted")
+                                              )
+                                  ),
+                              width = 2
+                              ),
+                            mainPanel(
+                              uiOutput("plot_and_plot_1"),
+                              uiOutput("plot_and_plot_2"),
+                              width = 10
+                            )
+              )
+      ),
       tabItem(tabName = "About",
               h2("US Data")
               )
@@ -123,43 +187,45 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   
+  #################################################################
+  
   # get column values reactive
-  get_col_reactive <- reactive({
+  get_col_reactive_1 <- reactive({
     year_col <- 0
     month_col <- 0
     week_col <- 0
     
     # decide how much space is required for each graph based on what is visible
-    if (all(c("Year", "Month", "Week") %in% input$time_frame)) {
+    if (all(c("Year", "Month", "Week") %in% input$time_frame_1)) {
       year_col <- 4
       month_col <- 4
       week_col <- 4
-    } else if (all(c("Month", "Week") %in% input$time_frame)) {
+    } else if (all(c("Month", "Week") %in% input$time_frame_1)) {
       year_col <- 0
       month_col <- 6
       week_col <- 6
       
-    } else if (all(c("Year", "Week") %in% input$time_frame)) {
+    } else if (all(c("Year", "Week") %in% input$time_frame_1)) {
       year_col <- 6
       month_col <- 0
       week_col <- 6
       
-    } else if (all(c("Year", "Month") %in% input$time_frame)) {
+    } else if (all(c("Year", "Month") %in% input$time_frame_1)) {
       year_col <- 6
       month_col <- 6
       week_col <- 0
       
-    } else if (all(c("Year") %in% input$time_frame)) {
+    } else if (all(c("Year") %in% input$time_frame_1)) {
       year_col <- 12
       month_col <- 0
       week_col <- 0
       
-    } else if (all(c("Month") %in% input$time_frame)) {
+    } else if (all(c("Month") %in% input$time_frame_1)) {
       year_col <- 0
       month_col <- 12
       week_col <- 0
       
-    } else if (all(c("Week") %in% input$time_frame)) {
+    } else if (all(c("Week") %in% input$time_frame_1)) {
       year_col <- 0
       month_col <- 0
       week_col <- 12
@@ -168,69 +234,275 @@ server <- function(input, output) {
     return(list(year_col, month_col, week_col))
   })
   
+  get_col_reactive_2 <- reactive({
+    year_col <- 0
+    month_col <- 0
+    week_col <- 0
+    
+    # decide how much space is required for each graph based on what is visible
+    if (all(c("Year", "Month", "Week") %in% input$time_frame_2)) {
+      year_col <- 4
+      month_col <- 4
+      week_col <- 4
+    } else if (all(c("Month", "Week") %in% input$time_frame_2)) {
+      year_col <- 0
+      month_col <- 6
+      week_col <- 6
+      
+    } else if (all(c("Year", "Week") %in% input$time_frame_2)) {
+      year_col <- 6
+      month_col <- 0
+      week_col <- 6
+      
+    } else if (all(c("Year", "Month") %in% input$time_frame_2)) {
+      year_col <- 6
+      month_col <- 6
+      week_col <- 0
+      
+    } else if (all(c("Year") %in% input$time_frame_2)) {
+      year_col <- 12
+      month_col <- 0
+      week_col <- 0
+      
+    } else if (all(c("Month") %in% input$time_frame_2)) {
+      year_col <- 0
+      month_col <- 12
+      week_col <- 0
+      
+    } else if (all(c("Week") %in% input$time_frame_2)) {
+      year_col <- 0
+      month_col <- 0
+      week_col <- 12
+    }
+    
+    return(list(year_col, month_col, week_col))
+  })
+  
+  get_col_reactive_3 <- reactive({
+    year_col <- 0
+    month_col <- 0
+    week_col <- 0
+    
+    # decide how much space is required for each graph based on what is visible
+    if (all(c("Year", "Month", "Week") %in% input$time_frame_3)) {
+      year_col <- 4
+      month_col <- 4
+      week_col <- 4
+    } else if (all(c("Month", "Week") %in% input$time_frame_3)) {
+      year_col <- 0
+      month_col <- 6
+      week_col <- 6
+      
+    } else if (all(c("Year", "Week") %in% input$time_frame_3)) {
+      year_col <- 6
+      month_col <- 0
+      week_col <- 6
+      
+    } else if (all(c("Year", "Month") %in% input$time_frame_3)) {
+      year_col <- 6
+      month_col <- 6
+      week_col <- 0
+      
+    } else if (all(c("Year") %in% input$time_frame_3)) {
+      year_col <- 12
+      month_col <- 0
+      week_col <- 0
+      
+    } else if (all(c("Month") %in% input$time_frame_3)) {
+      year_col <- 0
+      month_col <- 12
+      week_col <- 0
+      
+    } else if (all(c("Week") %in% input$time_frame_3)) {
+      year_col <- 0
+      month_col <- 0
+      week_col <- 12
+    }
+    
+    return(list(year_col, month_col, week_col))
+  })
+  
+  #################################################################
+  
   # create reactive dataframe for month and week
-  df_Reactive_month_week <- reactive({
+  df_Reactive_month_week_1 <- reactive({
     # create dataframe for a specific year and station
-    if (input$select_year != "Every") {
-      if (input$select_station != "Every") {
-        subset(all_data_df, all_data_df$year == input$select_year & all_data_df$stationname == input$select_station)
+    if (input$select_year_1 != "Every") {
+      if (input$select_station_1 != "Every") {
+        subset(all_data_df, all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1)
       } else {
-        subset(all_data_df, all_data_df$year == input$select_year)
+        subset(all_data_df, all_data_df$year == input$select_year_1)
       }
       
     } else {
-      if (input$select_station != "Every") {
-        subset(all_data_df, all_data_df$stationname == input$select_station)
+      if (input$select_station_1 != "Every") {
+        subset(all_data_df, all_data_df$stationname == input$select_station_1)
       } else {
         all_data_df
       }
     }
   })
   
+  df_Reactive_month_week_2 <- reactive({
+    # create dataframe for a specific year and station
+    if (input$select_year_2 != "Every") {
+      if (input$select_station_2 != "Every") {
+        subset(all_data_df, all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2)
+      } else {
+        subset(all_data_df, all_data_df$year == input$select_year_2)
+      }
+      
+    } else {
+      if (input$select_station_2 != "Every") {
+        subset(all_data_df, all_data_df$stationname == input$select_station_2)
+      } else {
+        all_data_df
+      }
+    }
+  })
+  
+  df_Reactive_month_week_3 <- reactive({
+    # create dataframe for a specific year and station
+    if (input$select_year_3 != "Every") {
+      if (input$select_station_3 != "Every") {
+        subset(all_data_df, all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3)
+      } else {
+        subset(all_data_df, all_data_df$year == input$select_year_3)
+      }
+      
+    } else {
+      if (input$select_station_3 != "Every") {
+        subset(all_data_df, all_data_df$stationname == input$select_station_3)
+      } else {
+        all_data_df
+      }
+    }
+  })
+  
+  #################################################################
+  
   # create reactive dataframe for month and week
-  df_Reactive_year <- reactive({
-    if (input$select_station != "Every") {
+  df_Reactive_year_1 <- reactive({
+    if (input$select_station_1 != "Every") {
       subset(all_data_df, all_data_df$stationname == input$select_station)
     } else {
       all_data_df
     }
   })
   
+  df_Reactive_year_2 <- reactive({
+    if (input$select_station_2 != "Every") {
+      subset(all_data_df, all_data_df$stationname == input$select_station)
+    } else {
+      all_data_df
+    }
+  })
+  
+  df_Reactive_year_3 <- reactive({
+    if (input$select_station_3 != "Every") {
+      subset(all_data_df, all_data_df$stationname == input$select_station)
+    } else {
+      all_data_df
+    }
+  })
+  
+  #################################################################
+  
   # create graph to show yearly data
-  output$entries_year_graph <- renderPlot({
-      ggplot(data = df_Reactive_year(), aes(x = year, y = rides)) + 
+  output$entries_year_graph_1 <- renderPlot({
+    ggplot(data = df_Reactive_year_1(), aes(x = year, y = rides)) + 
       geom_bar(stat = "identity") +
       scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station, "CTA Station"))
+      ggtitle(paste("Yearly Entries at", input$select_station_1, "CTA Station"))
   })
   
+  output$entries_year_graph_2 <- renderPlot({
+    ggplot(data = df_Reactive_year_2(), aes(x = year, y = rides)) + 
+      geom_bar(stat = "identity") +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Year",
+           y = "Entries") +
+      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station"))
+  })
+  
+  output$entries_year_graph_3 <- renderPlot({
+    ggplot(data = df_Reactive_year_3(), aes(x = year, y = rides)) + 
+      geom_bar(stat = "identity") +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Year",
+           y = "Entries") +
+      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station"))
+  })
+  
+  #################################################################
+  
   # create graph to show monthly data
-  output$entries_month_graph <- renderPlot({
-    ggplot(data = df_Reactive_month_week(), aes(x = reorder(monthChar, month), y = rides)) + 
+  output$entries_month_graph_1 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_1(), aes(x = reorder(monthChar, month), y = rides)) + 
       geom_bar(stat = "identity") +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station, "CTA Station"))
+      ggtitle(paste("Monthly Entries at", input$select_station_1, "CTA Station"))
   })
   
+  output$entries_month_graph_2 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_2(), aes(x = reorder(monthChar, month), y = rides)) + 
+      geom_bar(stat = "identity") +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Month",
+           y = "Entries") +
+      ggtitle(paste("Monthly Entries at", input$select_station_2, "CTA Station"))
+  })
+  
+  output$entries_month_graph_3 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_3(), aes(x = reorder(monthChar, month), y = rides)) + 
+      geom_bar(stat = "identity") +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Month",
+           y = "Entries") +
+      ggtitle(paste("Monthly Entries at", input$select_station_3, "CTA Station"))
+  })
+  
+  #################################################################
+  
   # create graph to show weekly data
-  output$entries_week <- renderPlot({
-    ggplot(data = df_Reactive_month_week(), aes(x = reorder(dayChar, day), y = rides)) +
+  output$entries_week_graph_1 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_1(), aes(x = reorder(dayChar, day), y = rides)) +
       geom_bar(stat = "identity") +
       labs(x = "Day",
              y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station, "CTA Station"))
+      ggtitle(paste("Day of the week Entries at", input$select_station_1, "CTA Station"))
   })
+  
+  output$entries_week_graph_2 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_2(), aes(x = reorder(dayChar, day), y = rides)) +
+      geom_bar(stat = "identity") +
+      labs(x = "Day",
+           y = "Entries") +
+      ggtitle(paste("Day of the week Entries at", input$select_station_2, "CTA Station"))
+  })
+  
+  output$entries_week_graph_3 <- renderPlot({
+    ggplot(data = df_Reactive_month_week_3(), aes(x = reorder(dayChar, day), y = rides)) +
+      geom_bar(stat = "identity") +
+      labs(x = "Day",
+           y = "Entries") +
+      ggtitle(paste("Day of the week Entries at", input$select_station_3, "CTA Station"))
+  })
+  
+  #################################################################
   
   # create new Data frame to show yearly data
   entries_year_table <- reactive({
     # keep only following columns
     keep <- c("stationname", "year", "ridesChar")
-    temp_df <- df_Reactive_year()[keep]
+    temp_df <- df_Reactive_year_1()[keep]
     
     # rename
     names(temp_df)[1] <- "Station"
@@ -244,7 +516,7 @@ server <- function(input, output) {
   entries_year_table <- reactive({
     # keep only following columns
     keep <- c("stationname", "year", "ridesChar")
-    temp_df <- df_Reactive_month_week()[keep]
+    temp_df <- df_Reactive_month_week_1()[keep]
     
     # rename
     names(temp_df)[1] <- "Station"
@@ -258,7 +530,7 @@ server <- function(input, output) {
   entries_month_table <- reactive({
     # keep only following columns
     keep <- c("stationname", "monthChar", "ridesChar")
-    temp_df <- df_Reactive_month_week()[keep]
+    temp_df <- df_Reactive_month_week_1()[keep]
     
     # rename
     names(temp_df)[1] <- "Station"
@@ -272,7 +544,7 @@ server <- function(input, output) {
   entries_week_table <- reactive({
     # keep only following columns
     keep <- c("stationname", "dayChar", "ridesChar")
-    temp_df <- df_Reactive_month_week()[keep]
+    temp_df <- df_Reactive_month_week_1()[keep]
     
     # rename
     names(temp_df)[1] <- "Station"
@@ -363,35 +635,92 @@ server <- function(input, output) {
     )
   })
   
-  # render UI
-  output$plots <- renderUI({
+  #################################################################
+  
+  # render plot and table
+  output$plot_and_table <- renderUI({
     validate(
-      need(input$time_frame, 'Check at least one Time Frame!')
+      need(input$time_frame_1, 'Check at least one Time Frame!')
     )
     
-    col_val_reactive <- get_col_reactive()
+    col_val_reactive <- get_col_reactive_1()
     
     # put three plots in a row
     fluidRow(
       if (as.integer(col_val_reactive[1]) != 0) {
         column(as.integer(col_val_reactive[1]), 
-               div(plotOutput("entries_year_graph")),
+               div(plotOutput("entries_year_graph_1")),
                uiOutput("entries_year_table")
-               )
+        )
       },
       
       if (as.integer(col_val_reactive[2]) != 0) {
         column(as.integer(col_val_reactive[2]), 
-               div(plotOutput("entries_month_graph")),
+               div(plotOutput("entries_month_graph_1")),
                uiOutput("entries_month_table")
-               )
+        )
       },
       
       if (as.integer(col_val_reactive[3]) != 0) {
         column(as.integer(col_val_reactive[3]), 
-               div(plotOutput("entries_week")),
+               div(plotOutput("entries_week_graph_1")),
                uiOutput("entries_week_table")
-               )
+        )
+      }
+    )
+  })
+  
+  # render two plots
+  output$plot_and_plot_1 <- renderUI({
+    validate(
+      need(input$time_frame_2, 'Check at least one Time Frame!')
+    )
+    
+    # put three plots in a row
+    fluidRow(
+      if (as.integer(get_col_reactive_2()[1]) != 0) {
+        column(as.integer(get_col_reactive_2()[1]), 
+               div(plotOutput("entries_year_graph_2"))
+        )
+      },
+      
+      if (as.integer(get_col_reactive_2()[2]) != 0) {
+        column(as.integer(get_col_reactive_2()[2]), 
+               div(plotOutput("entries_month_graph_2"))
+        )
+      },
+      
+      if (as.integer(get_col_reactive_2()[3]) != 0) {
+        column(as.integer(get_col_reactive_2()[3]), 
+               div(plotOutput("entries_week_graph_2"))
+        )
+      }
+    )
+  })
+  
+  output$plot_and_plot_2 <- renderUI({
+    validate(
+      need(input$time_frame_3, 'Check at least one Time Frame!')
+    )
+    
+    # put three plots in a row
+    fluidRow(
+      if (as.integer(get_col_reactive_3()[1]) != 0) {
+        column(as.integer(get_col_reactive_3()[1]), 
+               div(plotOutput("entries_year_graph_3"))
+        )
+      },
+      
+      if (as.integer(get_col_reactive_3()[2]) != 0) {
+        column(as.integer(get_col_reactive_3()[2]), 
+               div(plotOutput("entries_month_graph_3"))
+        )
+      },
+      
+      if (as.integer(get_col_reactive_3()[3]) != 0) {
+        column(as.integer(get_col_reactive_3()[3]), 
+               div(plotOutput("entries_week_graph_3"))
+        )
       }
     )
   })
