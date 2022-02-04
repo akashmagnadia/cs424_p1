@@ -190,6 +190,22 @@ server <- function(input, output) {
   
   #################################################################
   
+  getGradientCol <- function(x) {
+    gradientCol <- "black"
+    
+    if (x == "UIC-Halsted") {
+      gradientCol <- "red"
+    } else if (x == "O'Hare Airport") {
+      gradientCol <- "blue"
+    } else if (x == "Rosemont") {
+      gradientCol <- "green"
+    } else {
+      gradientCol <- "black"
+    }
+  }
+  
+  #################################################################
+  
   # get column values reactive
   get_col_reactive_1 <- reactive({
     year_col <- 0
@@ -384,27 +400,60 @@ server <- function(input, output) {
   
   # create reactive dataframe for month and week
   df_Reactive_year_1 <- reactive({
+    temp_df <- NULL
+    
     if (input$select_station_1 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_1)
+      temp_df <- subset(all_data_df, all_data_df$stationname == input$select_station_1)
     } else {
-      all_data_df
+      temp_df <- all_data_df
     }
+    
+    year <- 2001:2021
+    rides <- array(unlist(
+      lapply(2001:2021, 
+             function(year) sum(temp_df[temp_df$year == year,]$rides))
+    )
+    )
+    
+    data.frame(year, rides)
   })
   
   df_Reactive_year_2 <- reactive({
+    temp_df <- NULL
+    
     if (input$select_station_2 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_2)
+      temp_df <- subset(all_data_df, all_data_df$stationname == input$select_station_2)
     } else {
-      all_data_df
+      temp_df <- all_data_df
     }
+    
+    year <- 2001:2021
+    rides <- array(unlist(
+      lapply(2001:2021, 
+             function(year) sum(temp_df[temp_df$year == year,]$rides))
+    )
+    )
+    
+    data.frame(year, rides)
   })
   
   df_Reactive_year_3 <- reactive({
+    temp_df <- NULL
+    
     if (input$select_station_3 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_3)
+      temp_df <- subset(all_data_df, all_data_df$stationname == input$select_station_3)
     } else {
-      all_data_df
+      temp_df <- all_data_df
     }
+    
+    year <- 2001:2021
+    rides <- array(unlist(
+      lapply(2001:2021, 
+             function(year) sum(temp_df[temp_df$year == year,]$rides))
+    )
+    )
+    
+    data.frame(year, rides)
   })
   
   #################################################################
@@ -412,27 +461,30 @@ server <- function(input, output) {
   # create graph to show yearly data
   output$entries_year_graph_1 <- renderPlot({
     ggplot(data = df_Reactive_year_1(), aes(x = year, y = rides)) + 
-      geom_bar(stat = "identity") +
+      geom_bar(stat = 'identity', aes(fill = rides)) +
       scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
       ggtitle(paste("Yearly Entries at", input$select_station_1, "CTA Station")) +
-      geom_col(aes(fill = rides)) +
       scale_fill_gradient2(low = "white", 
-                           high = "red", 
-                           midpoint = median(0))
+                           high = getGradientCol(input$select_station_1), 
+                           midpoint = median(0)) +
+      theme(legend.position = "none")
   })
   
   output$entries_year_graph_2 <- renderPlot({
     ggplot(data = df_Reactive_year_2(), aes(x = year, y = rides)) + 
-      geom_bar(stat = "identity") +
+      geom_bar(stat = 'identity', aes(fill = rides)) +
       scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
       ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station")) +
-      geom_col(aes(fill = rides))
+      scale_fill_gradient2(low = "white", 
+                           high = getGradientCol(input$select_station_2), 
+                           midpoint = median(0)) +
+      theme(legend.position = "none")
   })
   
   output$entries_year_graph_3 <- renderPlot({
@@ -444,8 +496,9 @@ server <- function(input, output) {
            y = "Entries") +
       ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station")) +
       scale_fill_gradient2(low = "white", 
-                           high = "red", 
-                           midpoint = median(0))
+                           high = getGradientCol(input$select_station_3), 
+                           midpoint = median(0)) +
+      theme(legend.position = "none")
   })
   
   #################################################################
