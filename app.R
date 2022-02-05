@@ -127,8 +127,9 @@ ui <- dashboardPage(
                                     fluidRow(
                                       column(1),
                                       column(10,
-                                             h5("testing insight 1")
-                                             ),
+                                             h5("When we look at weekly data in 2021, we can see that there is increased activity at UIC-Halsted during weekday compared to the weekend. This is due to the fact that most classes are held from Monday to Friday.")
+                                      ),
+                                      column(1),
                                     )
                    ),
                    conditionalPanel(condition = "input.tabs == 'insight2'",
@@ -136,6 +137,71 @@ ui <- dashboardPage(
                                       column(1),
                                       column(10,
                                              h5("testing insight 2")
+                                      ),
+                                      column(1),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight3'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 3")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight4'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 4")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight5'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 5")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight6'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 6")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight7'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 7")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight8'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 8")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight9'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 9")
+                                      ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight10'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 10")
                                       ),
                                     )
                    )
@@ -997,12 +1063,69 @@ server <- function(input, output, session) {
   observe({
     if (input$tabs == "insight1") {
       updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = "Every")
-      updateSelectInput(session, 'select_station_1', selected = "Every")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month", "Week"))
+      updateSelectInput(session, 'select_year_1', selected = 2021)
+      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateTabItems(session, 'tabs', 'insight1')
     }
     
     if (input$tabs == "insight2") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight3") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight4") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight5") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight6") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight7") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight8") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight9") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
+    
+    if (input$tabs == "insight10") {
       updateTabItems(session, 'tabs', 'compare_table')
       updateSelectInput(session, 'select_year_1', selected = 2020)
       updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
