@@ -203,7 +203,7 @@ ui <- dashboardPage(
                                       ),
                                     )
                    )
-    ),
+  ),
   dashboardBody(
     tabItems(
       tabItem(tabName = "compare_table",
@@ -225,24 +225,24 @@ ui <- dashboardPage(
                                                        "Year",
                                                        choices = c("Every", 2021:2001),
                                                        selected = c(2021)
-                                                       )
-                                           )
                                        )
-                                ),
+                                       )
+                                )
+                              ),
                               div(selectInput("select_station_1",
                                               "Station",
                                               choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
                                               selected = c("UIC-Halsted")
-                                              )
-                                  ),
+                              )
+                              ),
                               width = 2
                             ),
                             mainPanel(
                               uiOutput("plot_and_table"),
                               width = 10
-                              )
                             )
-              ),
+              )
+      ),
       tabItem(tabName = "compare_graph",
               sidebarLayout(position = "left",
                             sidebarPanel(
@@ -254,24 +254,24 @@ ui <- dashboardPage(
                                                               "Time Frame",
                                                               choices = c("Year", "Month", "Week"),
                                                               selected = c("Year", "Month", "Week")
-                                                              )
-                                           )
-                                       ),
+                                       )
+                                       )
+                                ),
                                 column(6,
                                        div(selectInput("select_year_2",
                                                        "Year",
                                                        choices = c("Every", 2021:2001),
                                                        selected = c(2021)
-                                                       )
-                                           )
                                        )
-                                ),
+                                       )
+                                )
+                              ),
                               div(selectInput("select_station_2",
                                               "Station",
                                               choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
                                               selected = c("UIC-Halsted")
-                                              )
-                                  ),
+                              )
+                              ),
                               h2("Bottom Plot(s)"),
                               fluidRow(
                                 column(6, 
@@ -279,26 +279,26 @@ ui <- dashboardPage(
                                                               "Time Frame",
                                                               choices = c("Year", "Month", "Week"),
                                                               selected = c("Year", "Month", "Week")
-                                                              )
-                                           )
-                                       ),
+                                       )
+                                       )
+                                ),
                                 column(6,
                                        div(selectInput("select_year_3",
                                                        "Year",
                                                        choices = c("Every", 2021:2001),
                                                        selected = c(2021)
-                                                       )
-                                           )
                                        )
-                                ),
+                                       )
+                                )
+                              ),
                               div(selectInput("select_station_3",
                                               "Station",
                                               choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
                                               selected = c("UIC-Halsted")
-                                              )
-                                  ),
-                              width = 2
+                              )
                               ),
+                              width = 2
+                            ),
                             mainPanel(
                               uiOutput("plot_and_plot_1"),
                               uiOutput("plot_and_plot_2"),
@@ -307,11 +307,15 @@ ui <- dashboardPage(
               )
       ),
       tabItem(tabName = "About",
-              h2("US Data")
-              )
+              h2("About Page"),
+              h3("Project created by Akash Magnadia for CS 424"),
+              h3("Data source: https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f"),
+              h3("Created February 5th, 2022"),
+              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data can be viewed for a single year or every year. The data can be different views such as yearly, monthly, or weekly views. The plots can be split into a graph and a table or split into two independent plots with their function.")
       )
     )
   )
+)
 
 server <- function(input, output, session) {
   
@@ -845,7 +849,7 @@ server <- function(input, output, session) {
       geom_bar(stat = 'identity', aes(fill = rides)) +
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
-             y = "Entries") +
+           y = "Entries") +
       ggtitle(paste("Day of the week Entries at", input$select_station_1, "CTA Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_1), 
@@ -936,26 +940,26 @@ server <- function(input, output, session) {
   output$entries_year_table <- renderUI({
     # format the table layout
     div(
-    tags$head(
-      tags$style(
-        HTML('
+      tags$head(
+        tags$style(
+          HTML('
           .datatables {
             height: unset !important;
             width: inherit !important;
           }
            ')
-      )
-    ),
-    
-    datatable(
-      entries_year_table(),
-      options = list(
-        pageLength = 8,
-        scrollX = TRUE,
-        dom = 'tp',
-        columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        )
       ),
-      rownames = FALSE
+      
+      datatable(
+        entries_year_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
       )
     )
   })
@@ -984,9 +988,9 @@ server <- function(input, output, session) {
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
         ),
         rownames = FALSE
-        )
       )
-    })
+    )
+  })
   
   # create a data table to show weekly data
   output$entries_week_table <- renderUI({
