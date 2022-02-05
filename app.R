@@ -98,8 +98,8 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
-                     menuItem("Graph and Table", tabName = "compare_table"),
-                     menuItem("Two Graphs", tabName = "compare_graph", selected = T)
+                     menuItem("Graph and Table", tabName = "compare_table", selected = T),
+                     menuItem("Two Graphs", tabName = "compare_graph")
                    )
     ),
   dashboardBody(
@@ -738,44 +738,48 @@ server <- function(input, output) {
   
   # create new Data frame to show yearly data
   entries_year_table <- reactive({
-    # keep only following columns
-    keep <- c("stationname", "year", "ridesChar")
-    temp_df <- df_Reactive_year_1()[keep]
+    toReturn <- sum_of_year_df_1()
     
     # rename
-    names(temp_df)[1] <- "Station"
-    names(temp_df)[2] <- "Year"
-    names(temp_df)[3] <- "Entries"
+    names(toReturn)[1] <- "Year"
+    names(toReturn)[2] <- "Entries"
     
-    temp_df
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
   })
   
   # create new Data frame to show monthly data
   entries_month_table <- reactive({
-    # keep only following columns
-    keep <- c("stationname", "monthChar", "ridesChar")
-    temp_df <- df_Reactive_month_week_1()[keep]
+    toReturn <- sum_of_month_df_1()
+    keep <- c("monthChar", "rides")
+    toReturn <- toReturn[keep]
     
     # rename
-    names(temp_df)[1] <- "Station"
-    names(temp_df)[2] <- "Month"
-    names(temp_df)[3] <- "Entries"
+    names(toReturn)[1] <- "Month"
+    names(toReturn)[2] <- "Entries"
     
-    temp_df
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
   })
   
   # create new Data frame to show weekly data
   entries_week_table <- reactive({
-    # keep only following columns
-    keep <- c("stationname", "dayChar", "ridesChar")
-    temp_df <- df_Reactive_month_week_1()[keep]
+    toReturn <- sum_of_week_df_1()
+    keep <- c("dayChar", "rides")
+    toReturn <- toReturn[keep]
     
     # rename
-    names(temp_df)[1] <- "Station"
-    names(temp_df)[2] <- "Day of Week"
-    names(temp_df)[3] <- "Entries"
+    names(toReturn)[1] <- "Day"
+    names(toReturn)[2] <- "Entries"
     
-    temp_df
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
   })
   
   #################################################################
