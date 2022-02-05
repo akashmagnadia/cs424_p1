@@ -95,6 +95,10 @@ all_data_df$names <- NULL
 
 all_data_df$stationname[all_data_df$stationname == "OHare Airport"] <- "O'Hare Airport"
 
+all_data_df_uic <- subset(all_data_df, all_data_df$stationname == "UIC-Halsted")
+all_data_df_ohare <- subset(all_data_df, all_data_df$stationname == "OHare Airport")
+all_data_df_rose <- subset(all_data_df, all_data_df$stationname == "Rosemont")
+
 # Create the shiny application
 ui <- dashboardPage(
   dashboardHeader(title = "CTA Data Visualization"),
@@ -339,7 +343,15 @@ server <- function(input, output, session) {
   
   sum_of_year_1 <- function(year) {
     if (input$select_station_1 != "Every") {
-      sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_1,]$rides)
+      if (input$select_station_1 == "UIC-Halsted") {
+        sum(all_data_df_uic[all_data_df_uic$year == year,]$rides)
+      } else if (input$select_station_1 == "Rosemont") {
+        sum(all_data_df_rose[all_data_df_rose$year == year,]$rides)
+      } else if (input$select_station_1 == "O'Hare Airport") {
+        sum(all_data_df_ohare[all_data_df_ohare$year == year,]$rides)
+      } else {
+        sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_1,]$rides)
+      }
     } else {
       sum(all_data_df[all_data_df$year == year,]$rides)
     }
@@ -347,7 +359,15 @@ server <- function(input, output, session) {
   
   sum_of_year_2 <- function(year) {
     if (input$select_station_2 != "Every") {
-      sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_2,]$rides)
+      if (input$select_station_2 == "UIC-Halsted") {
+        sum(all_data_df_uic[all_data_df_uic$year == year,]$rides)
+      } else if (input$select_station_2 == "Rosemont") {
+        sum(all_data_df_rose[all_data_df_rose$year == year,]$rides)
+      } else if (input$select_station_2 == "Ohare Airport") {
+        sum(all_data_df_ohare[all_data_df_ohare$year == year,]$rides)
+      } else {
+        sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_2,]$rides)
+      }
     } else {
       sum(all_data_df[all_data_df$year == year,]$rides)
     }
@@ -355,7 +375,15 @@ server <- function(input, output, session) {
   
   sum_of_year_3 <- function(year) {
     if (input$select_station_3 != "Every") {
-      sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_3,]$rides)
+      if (input$select_station_3 == "UIC-Halsted") {
+        sum(all_data_df_uic[all_data_df_uic$year == year,]$rides)
+      } else if (input$select_station_3 == "Rosemont") {
+        sum(all_data_df_rose[all_data_df_rose$year == year,]$rides)
+      } else if (input$select_station_3 == "Ohare Airport") {
+        sum(all_data_df_ohare[all_data_df_ohare$year == year,]$rides)
+      } else {
+        sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_3,]$rides)
+      }
     } else {
       sum(all_data_df[all_data_df$year == year,]$rides)
     }
@@ -366,7 +394,17 @@ server <- function(input, output, session) {
   sum_of_month_1 <- function(month) {
     if (input$select_year_1 != "Every") {
       if (input$select_station_1 != "Every") {
-        sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
+        
+        if (input$select_station_1 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$month == month & all_data_df_uic$year == input$select_year_1,]$rides)
+        } else if (input$select_station_1 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$month == month & all_data_df_rose$year == input$select_year_1,]$rides)
+        } else if (input$select_station_1 == "O'Hare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$month == month & all_data_df_ohare$year == input$select_year_1,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_1,]$rides)
       }
@@ -378,7 +416,17 @@ server <- function(input, output, session) {
   sum_of_month_2 <- function(month) {
     if (input$select_year_2 != "Every") {
       if (input$select_station_2 != "Every") {
-        sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2,]$rides)
+        
+        if (input$select_station_2 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$month == month & all_data_df_uic$year == input$select_year_2,]$rides)
+        } else if (input$select_station_2 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$month == month & all_data_df_rose$year == input$select_year_2,]$rides)
+        } else if (input$select_station_2 == "Ohare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$month == month & all_data_df_ohare$year == input$select_year_2,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_2,]$rides)
       }
@@ -390,7 +438,17 @@ server <- function(input, output, session) {
   sum_of_month_3 <- function(month) {
     if (input$select_year_3 != "Every") {
       if (input$select_station_3 != "Every") {
-        sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3,]$rides)
+        
+        if (input$select_station_3 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$month == month & all_data_df_uic$year == input$select_year_3,]$rides)
+        } else if (input$select_station_3 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$month == month & all_data_df_rose$year == input$select_year_3,]$rides)
+        } else if (input$select_station_3 == "Ohare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$month == month & all_data_df_ohare$year == input$select_year_3,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_3,]$rides)
       }
@@ -404,7 +462,17 @@ server <- function(input, output, session) {
   sum_of_week_1 <- function(day) {
     if (input$select_year_1 != "Every") {
       if (input$select_station_1 != "Every") {
-        sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
+        
+        if (input$select_station_1 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$day == day & all_data_df_uic$year == input$select_year_1,]$rides)
+        } else if (input$select_station_1 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$day == day & all_data_df_rose$year == input$select_year_1,]$rides)
+        } else if (input$select_station_1 == "O'Hare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$day == day & all_data_df_ohare$year == input$select_year_1,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_1,]$rides)
       }
@@ -416,7 +484,17 @@ server <- function(input, output, session) {
   sum_of_week_2 <- function(day) {
     if (input$select_year_2 != "Every") {
       if (input$select_station_2 != "Every") {
-        sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2,]$rides)
+        
+        if (input$select_station_2 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$day == day & all_data_df_uic$year == input$select_year_2,]$rides)
+        } else if (input$select_station_2 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$day == day & all_data_df_rose$year == input$select_year_2,]$rides)
+        } else if (input$select_station_2 == "Ohare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$day == day & all_data_df_ohare$year == input$select_year_2,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_2,]$rides)
       }
@@ -428,7 +506,17 @@ server <- function(input, output, session) {
   sum_of_week_3 <- function(day) {
     if (input$select_year_3 != "Every") {
       if (input$select_station_3 != "Every") {
-        sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3,]$rides)
+        
+        if (input$select_station_3 == "UIC-Halsted") {
+          sum(all_data_df_uic[all_data_df_uic$day == day & all_data_df_uic$year == input$select_year_3,]$rides)
+        } else if (input$select_station_3 == "Rosemont") {
+          sum(all_data_df_rose[all_data_df_rose$day == day & all_data_df_rose$year == input$select_year_3,]$rides)
+        } else if (input$select_station_3 == "Ohare Airport") {
+          sum(all_data_df_ohare[all_data_df_ohare$day == day & all_data_df_ohare$year == input$select_year_3,]$rides)
+        } else {
+          sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3,]$rides)
+        }
+        
       } else {
         sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_3,]$rides)
       }
@@ -569,96 +657,35 @@ server <- function(input, output, session) {
   })
   
   #################################################################
-  # create reactive dataframe for month and week
-  
-  df_Reactive_month_week_1 <- reactive({
-    # create dataframe for a specific year and station
-    if (input$select_year_1 != "Every") {
-      if (input$select_station_1 != "Every") {
-        subset(all_data_df, all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1)
-      } else {
-        subset(all_data_df, all_data_df$year == input$select_year_1)
-      }
-      
-    } else {
-      if (input$select_station_1 != "Every") {
-        subset(all_data_df, all_data_df$stationname == input$select_station_1)
-      } else {
-        all_data_df
-      }
-    }
-  })
-  
-  df_Reactive_month_week_2 <- reactive({
-    # create dataframe for a specific year and station
-    
-    temp_df <- NULL
-    
-    if (input$select_year_2 != "Every") {
-      if (input$select_station_2 != "Every") {
-        temp_df <- subset(all_data_df, all_data_df$year == input$select_year_2 & all_data_df$stationname == input$select_station_2)
-      } else {
-        temp_df <- subset(all_data_df, all_data_df$year == input$select_year_2)
-      }
-      
-    } else {
-      if (input$select_station_2 != "Every") {
-        temp_df <- subset(all_data_df, all_data_df$stationname == input$select_station_2)
-      } else {
-        temp_df <- all_data_df
-      }
-    }
-    
-    month <- 1:12
-    rides <- array(unlist(
-      lapply(2001:2021, 
-             sum(temp_df[temp_df$month == month,]$rides))
-    )
-    )
-    
-    data.frame(year, month)
-  })
-  
-  df_Reactive_month_week_3 <- reactive({
-    # create dataframe for a specific year and station
-    
-    temp_df <- NULL
-    
-    if (input$select_year_3 != "Every") {
-      if (input$select_station_3 != "Every") {
-        temp_df <- subset(all_data_df, all_data_df$year == input$select_year_3 & all_data_df$stationname == input$select_station_3)
-      } else {
-        temp_df <- subset(all_data_df, all_data_df$year == input$select_year_3)
-      }
-      
-    } else {
-      if (input$select_station_3 != "Every") {
-        temp_df <- subset(all_data_df, all_data_df$stationname == input$select_station_3)
-      } else {
-        temp_df <- all_data_df
-      }
-    }
-    
-    month <- 1:12
-    rides <- array(unlist(
-      lapply(2001:2021, 
-             sum(temp_df[temp_df$month == month,]$rides))
-    )
-    )
-    
-    data.frame(year, month)
-  })
-  
-  #################################################################
   
   # create reactive dataframe for year
   
   year_df_1 <- reactive({
     if (input$select_station_1 != "Every") {
       if (input$select_year_1 != "Every") {
-        subset(all_data_df, all_data_df$stationname == input$select_station_1 & all_data_df$year == input$select_year_1)
+        
+        if (input$select_station_1 == "UIC-Halsted") {
+          subset(all_data_df_uic, all_data_df_uic$year == input$select_year_1)
+        } else if (input$select_station_1 == "Rosemont") {
+          subset(all_data_df_rose, all_data_df_rose$year == input$select_year_1)
+        } else if (input$select_station_1 == "O'Hare Airport") {
+          subset(all_data_df_ohare, all_data_df_ohare$year == input$select_year_1)
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_1 & all_data_df$year == input$select_year_1)
+        }
+        
       } else {
-        subset(all_data_df, all_data_df$stationname == input$select_station_1)
+        
+        if (input$select_station_1 == "UIC-Halsted") {
+          all_data_df_uic
+        } else if (input$select_station_1 == "Rosemont") {
+          all_data_df_rose
+        } else if (input$select_station_1 == "O'Hare Airport") {
+          all_data_df_ohare
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_1)
+        }
+        
       }
     } else {
       if (input$select_year_1 != "Every") {
@@ -672,9 +699,29 @@ server <- function(input, output, session) {
   year_df_2 <- reactive({
     if (input$select_station_2 != "Every") {
       if (input$select_year_2 != "Every") {
-        subset(all_data_df, all_data_df$stationname == input$select_station_2 & all_data_df$year == input$select_year_2)
+        
+        if (input$select_station_2 == "UIC-Halsted") {
+          subset(all_data_df_uic, all_data_df_uic$year == input$select_year_2)
+        } else if (input$select_station_2 == "Rosemont") {
+          subset(all_data_df_rose, all_data_df_rose$year == input$select_year_2)
+        } else if (input$select_station_2 == "Ohare Airport") {
+          subset(all_data_df_ohare, all_data_df_ohare$year == input$select_year_2)
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_2 & all_data_df$year == input$select_year_2)
+        }
+        
       } else {
-        subset(all_data_df, all_data_df$stationname == input$select_station_2)
+        
+        if (input$select_station_2 == "UIC-Halsted") {
+          all_data_df_uic
+        } else if (input$select_station_2 == "Rosemont") {
+          all_data_df_rose
+        } else if (input$select_station_2 == "Ohare Airport") {
+          all_data_df_ohare
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_2)
+        }
+        
       }
     } else {
       if (input$select_year_2 != "Every") {
@@ -688,9 +735,29 @@ server <- function(input, output, session) {
   year_df_3 <- reactive({
     if (input$select_station_3 != "Every") {
       if (input$select_year_3 != "Every") {
-        subset(all_data_df, all_data_df$stationname == input$select_station_3 & all_data_df$year == input$select_year_3)
+        
+        if (input$select_station_3 == "UIC-Halsted") {
+          subset(all_data_df_uic, all_data_df_uic$year == input$select_year_3)
+        } else if (input$select_station_3 == "Rosemont") {
+          subset(all_data_df_rose, all_data_df_rose$year == input$select_year_3)
+        } else if (input$select_station_3 == "Ohare Airport") {
+          subset(all_data_df_ohare, all_data_df_ohare$year == input$select_year_3)
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_3 & all_data_df$year == input$select_year_3)
+        }
+        
       } else {
-        subset(all_data_df, all_data_df$stationname == input$select_station_3)
+        
+        if (input$select_station_3 == "UIC-Halsted") {
+          all_data_df_uic
+        } else if (input$select_station_3 == "Rosemont") {
+          all_data_df_rose
+        } else if (input$select_station_3 == "Ohare Airport") {
+          all_data_df_ohare
+        } else {
+          subset(all_data_df, all_data_df$stationname == input$select_station_3)
+        }
+        
       }
     } else {
       if (input$select_year_3 != "Every") {
@@ -736,32 +803,6 @@ server <- function(input, output, session) {
     )
     
     data.frame(year, rides)
-  })
-  
-  #################################################################
-  
-  df_Reactive_year_1 <- reactive({
-    if (input$select_station_1 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_1)
-    } else {
-      all_data_df
-    }
-  })
-  
-  df_Reactive_year_2 <- reactive({
-    if (input$select_station_2 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_2)
-    } else {
-      all_data_df
-    }
-  })
-  
-  df_Reactive_year_3 <- reactive({
-    if (input$select_station_3 != "Every") {
-      subset(all_data_df, all_data_df$stationname == input$select_station_3)
-    } else {
-      all_data_df
-    }
   })
   
   #################################################################
