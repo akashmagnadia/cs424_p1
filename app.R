@@ -85,6 +85,14 @@ allData$ridesChar <- formatC(allData$rides, format = "d", big.mark = ",")
 
 # turn to data frame
 all_data_df <- data.frame(allData)
+
+# set all values I won't be using to NULL
+all_data_df$station_id <- NULL
+all_data_df$dayType <- NULL
+all_data_df$fullDate <- NULL
+all_data_df$newDate <- NULL
+all_data_df$names <- NULL
+
 all_data_df$stationname[all_data_df$stationname == "OHare Airport"] <- "O'Hare Airport"
 
 # Create the shiny application
@@ -92,6 +100,7 @@ ui <- dashboardPage(
   dashboardHeader(title = "CTA Data Visualization"),
   dashboardSidebar(disable = FALSE, collapsed = FALSE,
                    sidebarMenu(
+                     id = "tabs",
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
@@ -99,7 +108,36 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
                      menuItem("Graph and Table", tabName = "compare_table", selected = T),
-                     menuItem("Two Graphs", tabName = "compare_graph")
+                     menuItem("Two Graphs", tabName = "compare_graph"),
+                     menuItem("Interesting insights",
+                              menuSubItem("Insight 1", tabName = "insight1"),
+                              menuSubItem("Insight 2", tabName = "insight2"),
+                              menuSubItem("Insight 3", tabName = "insight3"),
+                              menuSubItem("Insight 4", tabName = "insight4"),
+                              menuSubItem("Insight 5", tabName = "insight5"),
+                              menuSubItem("Insight 6", tabName = "insight6"),
+                              menuSubItem("Insight 7", tabName = "insight7"),
+                              menuSubItem("Insight 8", tabName = "insight8"),
+                              menuSubItem("Insight 9", tabName = "insight9"),
+                              menuSubItem("Insight 10", tabName = "insight10")
+                     )
+                   ),
+                   hr(),
+                   conditionalPanel(condition = "input.tabs == 'insight1'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 1")
+                                             ),
+                                    )
+                   ),
+                   conditionalPanel(condition = "input.tabs == 'insight2'",
+                                    fluidRow(
+                                      column(1),
+                                      column(10,
+                                             h5("testing insight 2")
+                                      ),
+                                    )
                    )
     ),
   dashboardBody(
@@ -211,7 +249,7 @@ ui <- dashboardPage(
     )
   )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   #################################################################
   
@@ -804,7 +842,8 @@ server <- function(input, output) {
       options = list(
         pageLength = 8,
         scrollX = TRUE,
-        dom = 'tp'
+        dom = 'tp',
+        columnDefs = list(list(className = 'dt-center', targets = "_all"))
       ),
       rownames = FALSE
       )
@@ -831,7 +870,8 @@ server <- function(input, output) {
         options = list(
           pageLength = 8,
           scrollX = TRUE,
-          dom = 'tp'
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
         ),
         rownames = FALSE
         )
@@ -858,7 +898,8 @@ server <- function(input, output) {
         options = list(
           pageLength = 8,
           scrollX = TRUE,
-          dom = 'tp'
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
         ),
         rownames = FALSE
       )
@@ -951,6 +992,22 @@ server <- function(input, output) {
         )
       }
     )
+  })
+  
+  observe({
+    if (input$tabs == "insight1") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = "Every")
+      updateSelectInput(session, 'select_station_1', selected = "Every")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month", "Week"))
+    }
+    
+    if (input$tabs == "insight2") {
+      updateTabItems(session, 'tabs', 'compare_table')
+      updateSelectInput(session, 'select_year_1', selected = 2020)
+      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+    }
   })
 }
 
