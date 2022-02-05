@@ -126,7 +126,7 @@ ui <- dashboardPage(
                    conditionalPanel(condition = "input.tabs == 'insight1'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
+                                      column(10,
                                              h5("When we look at weekly data in 2021, we can see that there is increased activity at UIC-Halsted during weekdays compared to the weekend. This is because most classes are held from Monday to Friday.")
                                       ),
                                     )
@@ -134,7 +134,7 @@ ui <- dashboardPage(
                    conditionalPanel(condition = "input.tabs == 'insight2'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
+                                      column(10,
                                              h5("When we look at monthly data in 2021, we can see a significant increase in activity at UIC-Halsted around August and September compared to April and May. This is because we were in remote learning the last semester, while this semester we are in-person learning.")
                                       ),
                                     )
@@ -142,7 +142,7 @@ ui <- dashboardPage(
                    conditionalPanel(condition = "input.tabs == 'insight3'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
+                                      column(10,
                                              h5("When we look at monthly data in 2020, we can see that after February, there is a significant decrease in activity at UIC-Halsted. This is because the entire school went in remote learning due to COVID-19.")
                                       ),
                                     )
@@ -150,7 +150,7 @@ ui <- dashboardPage(
                    conditionalPanel(condition = "input.tabs == 'insight4'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
+                                      column(10,
                                              h5("When we look at monthly data for UIC-Halsted during the years 2020 and 2021, we can see that we were in remote learning for half of the Spring 2020 semester and the next full year.")
                                       ),
                                     )
@@ -166,40 +166,40 @@ ui <- dashboardPage(
                    conditionalPanel(condition = "input.tabs == 'insight6'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
-                                             h5("testing insight 6")
+                                      column(10,
+                                             h5("When we look at historic ridership data at Rosemont station, we can see a steady increase in passengers year over year.")
                                       ),
                                     )
                    ),
                    conditionalPanel(condition = "input.tabs == 'insight7'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
-                                             h5("testing insight 7")
+                                      column(10,
+                                             h5("When we look at ridership data from all stations during 2016, we can see a spike in ridership on November 4, 2016. This is the same date when Cub's parade was held. Five days before the parade (October 29) was the day of the game that earned them world series.")
                                       ),
                                     )
                    ),
                    conditionalPanel(condition = "input.tabs == 'insight8'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
-                                             h5("testing insight 8")
+                                      column(10,
+                                             h5("When we look at ridership data from O'Hare station during 2001, we see that around September there is a dip in activity. This is because there were attacks on Twin Towers in New York and there was a fear of flying for the next few months. Furthermore, during 2002 there was a dip in entries at O'Hare during September due to fear of another attack on a plane.")
                                       ),
                                     )
                    ),
                    conditionalPanel(condition = "input.tabs == 'insight9'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
-                                             h5("testing insight 9")
+                                      column(10,
+                                             h5("Here we look at monthly data from 2018 at UIC-Halsted. We notice that there is a dip in ridership during May, June, July, and August because that's when UIC has summer vacation.")
                                       ),
                                     )
                    ),
                    conditionalPanel(condition = "input.tabs == 'insight10'",
                                     fluidRow(
                                       column(1),
-                                      column(9,
-                                             h5("testing insight 10")
+                                      column(10,
+                                             h5("Here when we look at November data for 2008, there is an overall increased activity at all CTA stations. This is because Obama held his presidential election acceptance speech at Grant Park in Chicago.")
                                       ),
                                     )
                    )
@@ -775,7 +775,7 @@ server <- function(input, output, session) {
   
   output$entries_year_graph_2 <- renderPlot({
     ggplot(data = year_df_2(), aes(x = newDate, y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_1)) +
+      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_2)) +
       scale_x_date(breaks = scales::pretty_breaks(n = 5)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
@@ -786,7 +786,7 @@ server <- function(input, output, session) {
   
   output$entries_year_graph_3 <- renderPlot({
     ggplot(data = year_df_3(), aes(x = newDate, y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_1)) +
+      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_3)) +
       scale_x_date(breaks = scales::pretty_breaks(n = 5)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
@@ -1153,41 +1153,44 @@ server <- function(input, output, session) {
     
     if (input$tabs == "insight6") {
       updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateSelectInput(session, 'select_year_1', selected = "Every")
+      updateSelectInput(session, 'select_station_1', selected = "Rosemont")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
       updateTabItems(session, 'tabs', 'insight6')
     }
     
     if (input$tabs == "insight7") {
       updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateSelectInput(session, 'select_year_1', selected = 2016)
+      updateSelectInput(session, 'select_station_1', selected = "Every")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
       updateTabItems(session, 'tabs', 'insight7')
     }
     
     if (input$tabs == "insight8") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2001)
+      updateSelectInput(session, 'select_year_3', selected = 2002)
+      updateSelectInput(session, 'select_station_2', selected = "O'Hare Airport")
+      updateSelectInput(session, 'select_station_3', selected = "O'Hare Airport")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Year"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Year"))
       updateTabItems(session, 'tabs', 'insight8')
     }
     
     if (input$tabs == "insight9") {
       updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateSelectInput(session, 'select_year_1', selected = 2018)
+      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
       updateTabItems(session, 'tabs', 'insight9')
     }
     
     if (input$tabs == "insight10") {
       updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateSelectInput(session, 'select_year_1', selected = 2008)
+      updateSelectInput(session, 'select_station_1', selected = "Every")
+      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year", "Month"))
       updateTabItems(session, 'tabs', 'insight10')
     }
   })
