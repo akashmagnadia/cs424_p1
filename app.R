@@ -2,6 +2,7 @@
 
 library(shiny)
 library(shinyWidgets)
+library(shinyjs)
 library(shinydashboard)
 library(ggplot2)
 library(lubridate)
@@ -99,6 +100,19 @@ all_data_df_uic <- subset(all_data_df, all_data_df$stationname == "UIC-Halsted")
 all_data_df_ohare <- subset(all_data_df, all_data_df$stationname == "O'Hare Airport")
 all_data_df_rose <- subset(all_data_df, all_data_df$stationname == "Rosemont")
 
+hideAllDesc <- function() {
+  shinyjs::hide(id = "insight1")
+  shinyjs::hide(id = "insight2")
+  shinyjs::hide(id = "insight3")
+  shinyjs::hide(id = "insight4")
+  shinyjs::hide(id = "insight5")
+  shinyjs::hide(id = "insight6")
+  shinyjs::hide(id = "insight7")
+  shinyjs::hide(id = "insight8")
+  shinyjs::hide(id = "insight9")
+  shinyjs::hide(id = "insight10")
+}
+
 # Create the shiny application
 ui <- dashboardPage(
   dashboardHeader(title = "CTA Data Visualization"),
@@ -127,85 +141,96 @@ ui <- dashboardPage(
                      )
                    ),
                    hr(),
-                   conditionalPanel(condition = "input.tabs == 'insight1'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at weekly data in 2021, we can see that there is increased activity at UIC-Halsted during weekdays compared to the weekend. This is because most classes are held from Monday to Friday.")
-                                      ),
-                                    )
+                   useShinyjs(),
+                   div(
+                     id = "insight1",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at weekly data in 2021, we can see that there is increased activity at UIC-Halsted during weekdays compared to the weekend. This is because most classes are held from Monday to Friday.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight2'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at monthly data in 2021, we can see a significant increase in activity at UIC-Halsted around August and September compared to April and May. This is because we were in remote learning the last semester, while this semester we are in-person learning.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight2",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at monthly data in 2021, we can see a significant increase in activity at UIC-Halsted around August and September compared to April and May. This is because we were in remote learning the last semester, while this semester we are in-person learning.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight3'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at monthly data in 2020, we can see that after February, there is a significant decrease in activity at UIC-Halsted. This is because the entire school went in remote learning due to COVID-19.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight3",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at monthly data in 2020, we can see that after February, there is a significant decrease in activity at UIC-Halsted. This is because the entire school went in remote learning due to COVID-19.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight4'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at monthly data for UIC-Halsted during the years 2020 and 2021, we can see that we were in remote learning for half of the Spring 2020 semester and the next full year.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight4",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at monthly data for UIC-Halsted during the years 2020 and 2021, we can see that we were in remote learning for half of the Spring 2020 semester and the next full year.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight5'",
-                                    fluidRow(
-                                      column(1),
-                                      column(9,
-                                             h5("When we look at monthly data for UIC-Halsted and O'Hare airport for 2020, we see a similar trend of decrease in activity starting February. This is because CDC came with new guidelines for institutions to follow to slow the spread of coronavirus.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight5",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at monthly data for UIC-Halsted and O'Hare airport for 2020, we see a similar trend of decrease in activity starting February. This is because CDC came with new guidelines for institutions to follow to slow the spread of coronavirus.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight6'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at historic ridership data at Rosemont station, we can see a steady increase in passengers year over year.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight6",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at historic ridership data at Rosemont station, we can see a steady increase in passengers year over year.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight7'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at ridership data from all stations during 2016, we can see a spike in ridership on November 4, 2016. This is the same date when Cub's parade was held. Five days before the parade (October 29) was the day of the game that earned them world series.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight7",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at ridership data from all stations during 2016, we can see a spike in ridership on November 4, 2016. This is the same date when Cub's parade was held. Five days before the parade (October 29) was the day of the game that earned them world series.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight8'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("When we look at ridership data from O'Hare station during 2001, we see that around September there is a dip in activity. This is because there were attacks on Twin Towers in New York and there was a fear of flying for the next few months. Furthermore, during 2002 there was a dip in entries at O'Hare during September due to fear of another attack on a plane.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight8",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("When we look at ridership data from O'Hare station during 2001, we see that around September there is a dip in activity. This is because there were attacks on Twin Towers in New York and there was a fear of flying for the next few months. Furthermore, during 2002 there was a dip in entries at O'Hare during September due to fear of another attack on a plane.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight9'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("Here we look at monthly data from 2018 at UIC-Halsted. We notice that there is a dip in ridership during May, June, July, and August because that's when UIC has summer vacation.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight9",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("Here we look at monthly data from 2018 at UIC-Halsted. We notice that there is a dip in ridership during May, June, July, and August because that's when UIC has summer vacation.")
+                       ),
+                     )
                    ),
-                   conditionalPanel(condition = "input.tabs == 'insight10'",
-                                    fluidRow(
-                                      column(1),
-                                      column(10,
-                                             h5("Here when we look at November data for 2008, there is an overall increased activity at all CTA stations. This is because Obama held his presidential election acceptance speech at Grant Park in Chicago.")
-                                      ),
-                                    )
+                   div(
+                     id = "insight10",
+                     fluidRow(
+                       column(1),
+                       column(10,
+                              h5("Here when we look at November data for 2008, there is an overall increased activity at all CTA stations. This is because Obama held his presidential election acceptance speech at Grant Park in Chicago.")
+                       ),
+                     )
                    )
   ),
   dashboardBody(
@@ -322,6 +347,10 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
+  
+  #################################################################
+  
+  hideAllDesc()
   
   #################################################################
   
@@ -1149,13 +1178,16 @@ server <- function(input, output, session) {
     )
   })
   
-  observe({
+  observeEvent(input$tabs, {
+    
     if (input$tabs == "insight1") {
       updateTabItems(session, 'tabs', 'compare_table')
       updateSelectInput(session, 'select_year_1', selected = 2021)
       updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
-      updateTabItems(session, 'tabs', 'insight1')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight2") {
@@ -1163,7 +1195,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = 2021)
       updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
-      updateTabItems(session, 'tabs', 'insight2')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight3") {
@@ -1171,7 +1205,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = 2020)
       updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
-      updateTabItems(session, 'tabs', 'insight3')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight4") {
@@ -1182,7 +1218,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
       updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Month"))
       updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Month"))
-      updateTabItems(session, 'tabs', 'insight4')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight5") {
@@ -1193,7 +1231,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_station_3', selected = "O'Hare Airport")
       updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Month"))
       updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Month"))
-      updateTabItems(session, 'tabs', 'insight5')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight6") {
@@ -1201,7 +1241,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = "Every")
       updateSelectInput(session, 'select_station_1', selected = "Rosemont")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
-      updateTabItems(session, 'tabs', 'insight6')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight7") {
@@ -1209,7 +1251,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = 2016)
       updateSelectInput(session, 'select_station_1', selected = "Every")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
-      updateTabItems(session, 'tabs', 'insight7')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight8") {
@@ -1220,7 +1264,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_station_3', selected = "O'Hare Airport")
       updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Year"))
       updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Year"))
-      updateTabItems(session, 'tabs', 'insight8')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight9") {
@@ -1228,7 +1274,9 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = 2018)
       updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
-      updateTabItems(session, 'tabs', 'insight9')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight10") {
@@ -1236,7 +1284,13 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_1', selected = 2008)
       updateSelectInput(session, 'select_station_1', selected = "Every")
       updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year", "Month"))
-      updateTabItems(session, 'tabs', 'insight10')
+      
+      hideAllDesc()
+      shinyjs::show(id = input$tabs)
+    }
+    
+    if (input$tabs == "About") {
+      hideAllDesc()
     }
   })
 }
