@@ -350,10 +350,6 @@ server <- function(input, output, session) {
   
   #################################################################
   
-  hideAllDesc()
-  
-  #################################################################
-  
   getGradientCol <- function(x) {
     gradientCol <- "black"
     
@@ -1293,6 +1289,8 @@ server <- function(input, output, session) {
       hideAllDesc()
     }
   })
+  
+  hideAllDesc()
 }
 
 shinyApp(ui = ui, server = server)
