@@ -96,7 +96,7 @@ all_data_df$names <- NULL
 all_data_df$stationname[all_data_df$stationname == "OHare Airport"] <- "O'Hare Airport"
 
 all_data_df_uic <- subset(all_data_df, all_data_df$stationname == "UIC-Halsted")
-all_data_df_ohare <- subset(all_data_df, all_data_df$stationname == "OHare Airport")
+all_data_df_ohare <- subset(all_data_df, all_data_df$stationname == "O'Hare Airport")
 all_data_df_rose <- subset(all_data_df, all_data_df$stationname == "Rosemont")
 
 # Create the shiny application
