@@ -115,7 +115,7 @@ hideAllDesc <- function() {
 
 # Create the shiny application
 ui <- dashboardPage(
-  dashboardHeader(title = "CTA Data Visualization"),
+  dashboardHeader(title = "CTA Train"),
   dashboardSidebar(disable = FALSE, collapsed = FALSE,
                    sidebarMenu(
                      id = "tabs",
