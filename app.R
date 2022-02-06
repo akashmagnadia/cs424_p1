@@ -46,11 +46,6 @@ add_monthChar <- function(df) {
 
 allData <- add_monthChar(allData)
 
-
-allData <- within(allData, {
-  names <- reorder(month, seq_along(newDate), order = TRUE)
-})
-
 # parse to days in the week
 allData$dayChar <- weekdays(allData$newDate)
 
@@ -91,8 +86,6 @@ all_data_df <- data.frame(allData)
 all_data_df$station_id <- NULL
 all_data_df$dayType <- NULL
 all_data_df$fullDate <- NULL
-# all_data_df$newDate <- NULL
-all_data_df$names <- NULL
 
 all_data_df$stationname[all_data_df$stationname == "OHare Airport"] <- "O'Hare Airport"
 
@@ -115,7 +108,7 @@ hideAllDesc <- function() {
 
 # Create the shiny application
 ui <- dashboardPage(
-  dashboardHeader(title = "CTA Train"),
+  dashboardHeader(title = "CTA Subway Data"),
   dashboardSidebar(disable = FALSE, collapsed = FALSE,
                    sidebarMenu(
                      id = "tabs",
@@ -340,7 +333,7 @@ ui <- dashboardPage(
               h3("Project created by Akash Magnadia for CS 424"),
               h3("Data source: https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f"),
               h3("Created February 5th, 2022"),
-              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data can be viewed for a single year or every year. The data can be different views such as yearly, monthly, or weekly views. The plots can be split into a graph and a table or split into two independent plots with their function.")
+              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data also be filtered by a specific year between 2001 to 2021 or every year. The data can be viewed in different panels such as yearly, monthly, or weekly views. The plots can be split into a graph and a table or split into two independent plots to display CTA ridership data.")
       )
     )
   )
