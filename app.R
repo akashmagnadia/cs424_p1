@@ -127,7 +127,7 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
                      menuItem("Graph and Table", tabName = "compare_table"),
-                     menuItem("Two Graphs", tabName = "compare_graph", selected = T),
+                     menuItem("Graphs and Tables", tabName = "compare_graph", selected = T),
                      menuItem("Interesting insights",
                               menuSubItem("Insight 1", tabName = "insight1"),
                               menuSubItem("Insight 2", tabName = "insight2"),
@@ -283,7 +283,7 @@ ui <- dashboardPage(
                                        div(checkboxGroupInput("time_frame_2",
                                                               "Time Frame",
                                                               choices = c("Yearly", "Daily", "Monthly", "Weekly"),
-                                                              selected = c("Yearly", "Daily", "Monthly", "Weekly")
+                                                              selected = c("Yearly")
                                        )
                                        )
                                 ),
@@ -308,7 +308,7 @@ ui <- dashboardPage(
                                        div(checkboxGroupInput("time_frame_3",
                                                               "Time Frame",
                                                               choices = c("Yearly", "Daily", "Monthly", "Weekly"),
-                                                              selected = c("Yearly", "Daily", "Monthly", "Weekly")
+                                                              selected = c("Yearly")
                                        )
                                        )
                                 ),
