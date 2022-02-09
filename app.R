@@ -752,7 +752,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_2)) +
+      ggtitle(paste("Yearly Entries at", input$select_station_2, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -766,7 +766,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_3)) +
+      ggtitle(paste("Yearly Entries at", input$select_station_3, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
@@ -784,7 +784,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Daily Entries at", input$select_station_2)) +
+      ggtitle(paste("Daily Entries at", input$select_station_2, "Station")) +
       theme(legend.position = "none")
   })
   
@@ -795,7 +795,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Daily Entries at", input$select_station_3)) +
+      ggtitle(paste("Daily Entries at", input$select_station_3, "Station")) +
       theme(legend.position = "none")
   })
   
@@ -809,7 +809,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_2)) +
+      ggtitle(paste("Monthly Entries at", input$select_station_2, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -822,7 +822,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_3)) +
+      ggtitle(paste("Monthly Entries at", input$select_station_3, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
@@ -839,7 +839,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
            y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_2)) +
+      ggtitle(paste("Day of week Entries at", input$select_station_2, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -852,7 +852,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
            y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_3)) +
+      ggtitle(paste("Day of week Entries at", input$select_station_3, "Station")) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
