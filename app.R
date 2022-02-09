@@ -117,9 +117,17 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
+                     menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
-                     menuItem("Graph and Table", tabName = "compare_table", selected = T),
-                     menuItem("Two Graphs", tabName = "compare_graph"),
+                     menuItem("Graph and Table", tabName = "compare_table"),
+                     menuItem("Two Graphs", tabName = "compare_graph", selected = T),
                      menuItem("Interesting insights",
                               menuSubItem("Insight 1", tabName = "insight1"),
                               menuSubItem("Insight 2", tabName = "insight2"),
@@ -825,7 +833,40 @@ server <- function(input, output, session) {
   
   #################################################################
   
-  # create graph to show yearly data
+  # create graph to show yearly data for all the years
+  
+  output$entries_year_sum_graph_2 <- renderPlot({
+    ggplot(data = sum_of_year_df_2(), aes(x = year, y = rides)) + 
+      geom_bar(stat = 'identity', aes(fill = rides)) +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Year",
+           y = "Entries") +
+      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station")) +
+      scale_fill_gradient2(low = "white", 
+                           high = getGradientCol(input$select_station_2), 
+                           midpoint = median(0)) +
+      theme(legend.position = "none")
+  })
+  
+  output$entries_year_sum_graph_3 <- renderPlot({
+    ggplot(data = sum_of_year_df_3(), aes(x = year, y = rides)) + 
+      geom_bar(stat = 'identity', aes(fill = rides)) +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
+      labs(x = "Year",
+           y = "Entries") +
+      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station")) +
+      scale_fill_gradient2(low = "white", 
+                           high = getGradientCol(input$select_station_3), 
+                           midpoint = median(0)) +
+      theme(legend.position = "none")
+  })
+  
+  #################################################################
+  
+  # create graph to show daily data for the year
+  
   output$entries_year_graph_1 <- renderPlot({
     ggplot(data = year_df_1(), aes(x = newDate, y = rides)) + 
       geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_1)) +
@@ -861,6 +902,7 @@ server <- function(input, output, session) {
   #################################################################
   
   # create graph to show monthly data
+  
   output$entries_month_graph_1 <- renderPlot({
     ggplot(data = sum_of_month_df_1(), aes(x = reorder(monthChar, month), y = rides)) + 
       geom_bar(stat = 'identity', aes(fill = rides)) +
@@ -903,6 +945,7 @@ server <- function(input, output, session) {
   #################################################################
   
   # create graph to show weekly data
+  
   output$entries_week_graph_1 <- renderPlot({
     ggplot(data = sum_of_week_df_1(), aes(x = reorder(dayChar, day), y = rides)) +
       geom_bar(stat = 'identity', aes(fill = rides)) +
@@ -945,6 +988,7 @@ server <- function(input, output, session) {
   #################################################################
   
   # create new Data frame to show yearly data
+  
   entries_year_table <- reactive({
     toReturn <- year_df_1()
     keep <- c("stationname", "newDate", "ridesChar")
@@ -960,6 +1004,40 @@ server <- function(input, output, session) {
     
     toReturn
   })
+  
+  entries_year_table_2 <- reactive({
+    toReturn <- year_df_2()
+    keep <- c("stationname", "newDate", "ridesChar")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Station"
+    names(toReturn)[2] <- "Date"
+    names(toReturn)[3] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  entries_year_table_3 <- reactive({
+    toReturn <- year_df_3()
+    keep <- c("stationname", "newDate", "ridesChar")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Station"
+    names(toReturn)[2] <- "Date"
+    names(toReturn)[3] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  #################################################################
   
   # create new Data frame to show monthly data
   entries_month_table <- reactive({
@@ -977,9 +1055,71 @@ server <- function(input, output, session) {
     toReturn
   })
   
+  entries_month_table_2 <- reactive({
+    toReturn <- sum_of_month_df_2()
+    keep <- c("monthChar", "rides")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Month"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  entries_month_table_3 <- reactive({
+    toReturn <- sum_of_month_df_3()
+    keep <- c("monthChar", "rides")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Month"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  #################################################################
+  
   # create new Data frame to show weekly data
   entries_week_table <- reactive({
     toReturn <- sum_of_week_df_1()
+    keep <- c("dayChar", "rides")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Day"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  entries_week_table_2 <- reactive({
+    toReturn <- sum_of_week_df_2()
+    keep <- c("dayChar", "rides")
+    toReturn <- toReturn[keep]
+    
+    # rename
+    names(toReturn)[1] <- "Day"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  entries_week_table_3 <- reactive({
+    toReturn <- sum_of_week_df_3()
     keep <- c("dayChar", "rides")
     toReturn <- toReturn[keep]
     
@@ -1013,7 +1153,7 @@ server <- function(input, output, session) {
       datatable(
         entries_year_table(),
         options = list(
-          pageLength = 8,
+          pageLength = 6,
           scrollX = TRUE,
           dom = 'tp',
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
@@ -1022,6 +1162,63 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  output$entries_year_table_2 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_year_table_2(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$entries_year_table_3 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_year_table_3(),
+        options = list(
+          pageLength = 6,
+          lengthChange = FALSE,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  #################################################################
   
   # create a data table to show monthly data
   output$entries_month_table <- renderUI({
@@ -1041,7 +1238,7 @@ server <- function(input, output, session) {
       datatable(
         entries_month_table(),
         options = list(
-          pageLength = 8,
+          pageLength = 6,
           scrollX = TRUE,
           dom = 'tp',
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
@@ -1050,6 +1247,62 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  output$entries_month_table_2 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_month_table_2(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$entries_month_table_3 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_month_table_3(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  #################################################################
   
   # create a data table to show weekly data
   output$entries_week_table <- renderUI({
@@ -1069,7 +1322,61 @@ server <- function(input, output, session) {
       datatable(
         entries_week_table(),
         options = list(
-          pageLength = 8,
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$entries_week_table_2 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_week_table_2(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$entries_week_table_3 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_week_table_3(),
+        options = list(
+          pageLength = 6,
           scrollX = TRUE,
           dom = 'tp',
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
@@ -1122,19 +1429,23 @@ server <- function(input, output, session) {
     fluidRow(
       if (as.integer(get_col(input$time_frame_2)[1]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[1]), 
-               div(plotOutput("entries_year_graph_2"))
+               div(plotOutput("entries_year_sum_graph_2")),
+               # div(plotOutput("entries_year_graph_2")),
+               uiOutput("entries_year_table_2")
         )
       },
       
       if (as.integer(get_col(input$time_frame_2)[2]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[2]), 
-               div(plotOutput("entries_month_graph_2"))
+               div(plotOutput("entries_month_graph_2")),
+               uiOutput("entries_month_table_2")
         )
       },
       
       if (as.integer(get_col(input$time_frame_2)[3]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[3]), 
-               div(plotOutput("entries_week_graph_2"))
+               div(plotOutput("entries_week_graph_2")),
+               uiOutput("entries_week_table_2")
         )
       }
     )
@@ -1149,19 +1460,23 @@ server <- function(input, output, session) {
     fluidRow(
       if (as.integer(get_col(input$time_frame_3)[1]) != 0) {
         column(as.integer(get_col(input$time_frame_3)[1]), 
-               div(plotOutput("entries_year_graph_3"))
+               div(plotOutput("entries_year_sum_graph_2")),
+               # div(plotOutput("entries_year_graph_3")),
+               uiOutput("entries_year_table_3")
         )
       },
       
       if (as.integer(get_col(input$time_frame_3)[2]) != 0) {
         column(as.integer(get_col(input$time_frame_3)[2]), 
-               div(plotOutput("entries_month_graph_3"))
+               div(plotOutput("entries_month_graph_3")),
+               uiOutput("entries_month_table_3")
         )
       },
       
       if (as.integer(get_col(input$time_frame_3)[3]) != 0) {
-        column(as.integer(get_col(input$time_frame_3)[3]), 
-               div(plotOutput("entries_week_graph_3"))
+        column(as.integer(get_col(input$time_frame_3)[3]),
+               div(plotOutput("entries_week_graph_3")),
+               uiOutput("entries_week_table_3")
         )
       }
     )
