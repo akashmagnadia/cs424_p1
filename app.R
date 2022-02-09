@@ -323,7 +323,7 @@ ui <- dashboardPage(
                               div(selectInput("select_station_3",
                                               "Station",
                                               choices = c("Every", "UIC-Halsted", "O'Hare Airport", "Rosemont"),
-                                              selected = c("UIC-Halsted")
+                                              selected = c("O'Hare Airport")
                               )
                               ),
                               width = 2
@@ -351,7 +351,21 @@ server <- function(input, output, session) {
   
   #################################################################
   
-  getGradientCol <- function(x) {
+  getLowGradientCol <- function(x) {
+    gradientCol <- "grey"
+    
+    if (x == "UIC-Halsted") {
+      gradientCol <- "#fbb4ae"
+    } else if (x == "O'Hare Airport") {
+      gradientCol <- "#b3cde3"
+    } else if (x == "Rosemont") {
+      gradientCol <- "#ccebc5"
+    } else {
+      gradientCol <- "#decbe4"
+    }
+  }
+  
+  getHighGradientCol <- function(x) {
     gradientCol <- "black"
     
     if (x == "UIC-Halsted") {
@@ -753,8 +767,8 @@ server <- function(input, output, session) {
       labs(x = "Year",
            y = "Entries") +
       ggtitle(paste("Yearly Entries at", input$select_station_2, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_2), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_2), 
+                           high = getHighGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
@@ -767,8 +781,8 @@ server <- function(input, output, session) {
       labs(x = "Year",
            y = "Entries") +
       ggtitle(paste("Yearly Entries at", input$select_station_3, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_3), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_3), 
+                           high = getHighGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
@@ -779,7 +793,7 @@ server <- function(input, output, session) {
   
   output$entries_year_graph_2 <- renderPlot({
     ggplot(data = year_df_2(), aes(x = newDate, y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_2)) +
+      geom_bar(stat = 'identity', aes(fill = rides), fill = getHighGradientCol(input$select_station_2)) +
       scale_x_date(breaks = scales::pretty_breaks(n = 5)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
@@ -790,7 +804,7 @@ server <- function(input, output, session) {
   
   output$entries_year_graph_3 <- renderPlot({
     ggplot(data = year_df_3(), aes(x = newDate, y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_3)) +
+      geom_bar(stat = 'identity', aes(fill = rides), fill = getHighGradientCol(input$select_station_3)) +
       scale_x_date(breaks = scales::pretty_breaks(n = 5)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
@@ -810,8 +824,8 @@ server <- function(input, output, session) {
       labs(x = "Month",
            y = "Entries") +
       ggtitle(paste("Monthly Entries at", input$select_station_2, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_2), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_2), 
+                           high = getHighGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
@@ -823,8 +837,8 @@ server <- function(input, output, session) {
       labs(x = "Month",
            y = "Entries") +
       ggtitle(paste("Monthly Entries at", input$select_station_3, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_3), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_3), 
+                           high = getHighGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
@@ -840,8 +854,8 @@ server <- function(input, output, session) {
       labs(x = "Day",
            y = "Entries") +
       ggtitle(paste("Day of week Entries at", input$select_station_2, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_2), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_2), 
+                           high = getHighGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
@@ -853,8 +867,8 @@ server <- function(input, output, session) {
       labs(x = "Day",
            y = "Entries") +
       ggtitle(paste("Day of week Entries at", input$select_station_3, "Station")) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_3), 
+      scale_fill_gradient2(low = getLowGradientCol(input$select_station_3), 
+                           high = getHighGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
       theme(legend.position = "none")
   })
