@@ -51,13 +51,13 @@ allData$dayChar <- weekdays(allData$newDate)
 
 # add new column for week that contains int
 add_dayToDayChar <- function(df) {
-  df$dayChar[df$day == 1] <- "Monday"
-  df$dayChar[df$day == 2] <- "Tuesday"
-  df$dayChar[df$day == 3] <- "Wednesday"
-  df$dayChar[df$day == 4] <- "Thursday"
-  df$dayChar[df$day == 5] <- "Friday"
-  df$dayChar[df$day == 6] <- "Saturday"
-  df$dayChar[df$day == 7] <- "Sunday"
+  df$dayChar[df$day == 1] <- "Mon"
+  df$dayChar[df$day == 2] <- "Tues"
+  df$dayChar[df$day == 3] <- "Wed"
+  df$dayChar[df$day == 4] <- "Thur"
+  df$dayChar[df$day == 5] <- "Fri"
+  df$dayChar[df$day == 6] <- "Sat"
+  df$dayChar[df$day == 7] <- "Sun"
   
   df
 }
@@ -147,7 +147,7 @@ ui <- dashboardPage(
                      id = "insight1",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at weekly data in 2021, we can see that there is increased activity at UIC-Halsted during weekdays compared to the weekend. This is because most classes are held from Monday to Friday.")
                        ),
                      )
@@ -156,7 +156,7 @@ ui <- dashboardPage(
                      id = "insight2",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at monthly data in 2021, we can see a significant increase in activity at UIC-Halsted around August and September compared to April and May. This is because we were in remote learning the last semester, while this semester we are in-person learning.")
                        ),
                      )
@@ -165,7 +165,7 @@ ui <- dashboardPage(
                      id = "insight3",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at monthly data in 2020, we can see that after February, there is a significant decrease in activity at UIC-Halsted. This is because the entire school went in remote learning due to COVID-19.")
                        ),
                      )
@@ -174,7 +174,7 @@ ui <- dashboardPage(
                      id = "insight4",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at monthly data for UIC-Halsted during the years 2020 and 2021, we can see that we were in remote learning for half of the Spring 2020 semester and the next full year.")
                        ),
                      )
@@ -183,7 +183,7 @@ ui <- dashboardPage(
                      id = "insight5",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at monthly data for UIC-Halsted and O'Hare airport for 2020, we see a similar trend of decrease in activity starting February. This is because CDC came with new guidelines for institutions to follow to slow the spread of coronavirus.")
                        ),
                      )
@@ -192,7 +192,7 @@ ui <- dashboardPage(
                      id = "insight6",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at historic ridership data at Rosemont station, we can see a steady increase in passengers year over year.")
                        ),
                      )
@@ -201,7 +201,7 @@ ui <- dashboardPage(
                      id = "insight7",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at ridership data from all stations during 2016, we can see a spike in ridership on November 4, 2016. This is the same date when Cub's parade was held. Five days before the parade (October 29) was the day of the game that earned them world series.")
                        ),
                      )
@@ -210,7 +210,7 @@ ui <- dashboardPage(
                      id = "insight8",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("When we look at ridership data from O'Hare station during 2001, we see that around September there is a dip in activity. This is because there were attacks on Twin Towers in New York and there was a fear of flying for the next few months. Furthermore, during 2002 there was a dip in entries at O'Hare during September due to fear of another attack on a plane.")
                        ),
                      )
@@ -219,7 +219,7 @@ ui <- dashboardPage(
                      id = "insight9",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("Here we look at monthly data from 2018 at UIC-Halsted. We notice that there is a dip in ridership during May, June, July, and August because that's when UIC has summer vacation.")
                        ),
                      )
@@ -228,7 +228,7 @@ ui <- dashboardPage(
                      id = "insight10",
                      fluidRow(
                        column(1),
-                       column(10,
+                       column(9,
                               h5("Here when we look at November data for 2008, there is an overall increased activity at all CTA stations. This is because Obama held his presidential election acceptance speech at Grant Park in Chicago.")
                        ),
                      )
@@ -282,8 +282,8 @@ ui <- dashboardPage(
                                 column(6, 
                                        div(checkboxGroupInput("time_frame_2",
                                                               "Time Frame",
-                                                              choices = c("Year", "Month", "Week"),
-                                                              selected = c("Year", "Month", "Week")
+                                                              choices = c("Yearly", "Daily", "Monthly", "Weekly"),
+                                                              selected = c("Yearly", "Daily", "Monthly", "Weekly")
                                        )
                                        )
                                 ),
@@ -307,8 +307,8 @@ ui <- dashboardPage(
                                 column(6, 
                                        div(checkboxGroupInput("time_frame_3",
                                                               "Time Frame",
-                                                              choices = c("Year", "Month", "Week"),
-                                                              selected = c("Year", "Month", "Week")
+                                                              choices = c("Yearly", "Daily", "Monthly", "Weekly"),
+                                                              selected = c("Yearly", "Daily", "Monthly", "Weekly")
                                        )
                                        )
                                 ),
@@ -555,47 +555,90 @@ server <- function(input, output, session) {
   
   # get column values reactive
   get_col <- function(df) {
-    year_col <- 0
-    month_col <- 0
-    week_col <- 0
+    yearly_col <- 0
+    daily_col <- 0
+    monthly_col <- 0
+    weekly_col <- 0
     
     # decide how much space is required for each graph based on what is visible
-    if (all(c("Year", "Month", "Week") %in% df)) {
-      year_col <- 4
-      month_col <- 4
-      week_col <- 4
-    } else if (all(c("Month", "Week") %in% df)) {
-      year_col <- 0
-      month_col <- 6
-      week_col <- 6
-      
-    } else if (all(c("Year", "Week") %in% df)) {
-      year_col <- 6
-      month_col <- 0
-      week_col <- 6
-      
-    } else if (all(c("Year", "Month") %in% df)) {
-      year_col <- 6
-      month_col <- 6
-      week_col <- 0
-      
-    } else if (all(c("Year") %in% df)) {
-      year_col <- 12
-      month_col <- 0
-      week_col <- 0
-      
-    } else if (all(c("Month") %in% df)) {
-      year_col <- 0
-      month_col <- 12
-      week_col <- 0
-      
-    } else if (all(c("Week") %in% df)) {
-      year_col <- 0
-      month_col <- 0
-      week_col <- 12
+    if (all(c("Yearly", "Daily", "Monthly", "Weekly") %in% df)) {
+      yearly_col <- 3
+      daily_col <- 3
+      monthly_col <- 3
+      weekly_col <- 3
+    } else if (all(c("Yearly", "Daily", "Monthly") %in% df)) {
+      yearly_col <- 4
+      daily_col <- 4
+      monthly_col <- 4
+      weekly_col <- 0
+    } else if (all(c("Yearly", "Daily", "Weekly") %in% df)) {
+      yearly_col <- 4
+      daily_col <- 4
+      monthly_col <- 0
+      weekly_col <- 4
+    } else if (all(c("Yearly", "Monthly", "Weekly") %in% df)) {
+      yearly_col <- 4
+      daily_col <- 0
+      monthly_col <- 4
+      weekly_col <- 4
+    } else if (all(c("Daily", "Monthly", "Weekly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 4
+      monthly_col <- 4
+      weekly_col <- 4
+    } else if (all(c("Yearly", "Daily") %in% df)) {
+      yearly_col <- 6
+      daily_col <- 6
+      monthly_col <- 0
+      weekly_col <- 0
+    } else if (all(c("Yearly", "Weekly") %in% df)) {
+      yearly_col <- 6
+      daily_col <- 0
+      monthly_col <- 0
+      weekly_col <- 6
+    } else if (all(c("Yearly", "Monthly") %in% df)) {
+      yearly_col <- 6
+      daily_col <- 0
+      monthly_col <- 6
+      weekly_col <- 0
+    } else if (all(c("Daily", "Monthly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 6
+      monthly_col <- 6
+      weekly_col <- 0
+    } else if (all(c("Daily", "Weekly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 6
+      monthly_col <- 0
+      weekly_col <- 6
+    } else if (all(c("Monthly", "Weekly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 0
+      monthly_col <- 6
+      weekly_col <- 6
+    } else if (all(c("Yearly") %in% df)) {
+      yearly_col <- 12
+      daily_col <- 0
+      monthly_col <- 0
+      weekly_col <- 0
+    } else if (all(c("Daily") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 12
+      monthly_col <- 0
+      weekly_col <- 0
+    } else if (all(c("Monthly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 0
+      monthly_col <- 12
+      weekly_col <- 0
+    } else if (all(c("Weekly") %in% df)) {
+      yearly_col <- 0
+      daily_col <- 0
+      monthly_col <- 0
+      weekly_col <- 12
     }
     
-    return(list(year_col, month_col, week_col))
+    return(list(yearly_col, daily_col, monthly_col, weekly_col))
   }
   
   #################################################################
@@ -838,11 +881,11 @@ server <- function(input, output, session) {
   output$entries_year_sum_graph_2 <- renderPlot({
     ggplot(data = sum_of_year_df_2(), aes(x = year, y = rides)) + 
       geom_bar(stat = 'identity', aes(fill = rides)) +
-      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 3)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station")) +
+      ggtitle(paste("Yearly Entries at", input$select_station_2)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -852,11 +895,11 @@ server <- function(input, output, session) {
   output$entries_year_sum_graph_3 <- renderPlot({
     ggplot(data = sum_of_year_df_3(), aes(x = year, y = rides)) + 
       geom_bar(stat = 'identity', aes(fill = rides)) +
-      scale_x_continuous(breaks = seq(2001, 2021, by = 2)) +
+      scale_x_continuous(breaks = seq(2001, 2021, by = 3)) +
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station")) +
+      ggtitle(paste("Yearly Entries at", input$select_station_3)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
@@ -874,7 +917,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", select_station_1, "CTA Station"))
+      ggtitle(paste("Yearly Entries at", select_station_1))
   })
   
   output$entries_year_graph_2 <- renderPlot({
@@ -884,7 +927,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_2, "CTA Station")) +
+      ggtitle(paste("Daily Entries at", input$select_station_2)) +
       theme(legend.position = "none")
   })
   
@@ -895,7 +938,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Year",
            y = "Entries") +
-      ggtitle(paste("Yearly Entries at", input$select_station_3, "CTA Station")) +
+      ggtitle(paste("Daily Entries at", input$select_station_3)) +
       theme(legend.position = "none")
   })
   
@@ -909,7 +952,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_1, "CTA Station")) +
+      ggtitle(paste("Monthly Entries at", input$select_station_1)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_1), 
                            midpoint = median(0)) +
@@ -922,7 +965,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_2, "CTA Station")) +
+      ggtitle(paste("Monthly Entries at", input$select_station_2)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -935,7 +978,7 @@ server <- function(input, output, session) {
       scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
       labs(x = "Month",
            y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_3, "CTA Station")) +
+      ggtitle(paste("Monthly Entries at", input$select_station_3)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
@@ -952,7 +995,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
            y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_1, "CTA Station")) +
+      ggtitle(paste("Day of the week Entries at", input$select_station_1)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_1), 
                            midpoint = median(0)) +
@@ -965,7 +1008,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
            y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_2, "CTA Station")) +
+      ggtitle(paste("Day of the week Entries at", input$select_station_2)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_2), 
                            midpoint = median(0)) +
@@ -978,7 +1021,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = comma) +
       labs(x = "Day",
            y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_3, "CTA Station")) +
+      ggtitle(paste("Day of the week Entries at", input$select_station_3)) +
       scale_fill_gradient2(low = "white", 
                            high = getGradientCol(input$select_station_3), 
                            midpoint = median(0)) +
@@ -1135,7 +1178,95 @@ server <- function(input, output, session) {
   
   #################################################################
   
-  # create a data table to show yearly data
+  # create a data frame to show yearly data for the station(s) selected
+  
+  entries_year_sum_table_2 <- reactive({
+    toReturn <- sum_of_year_df_2()
+    
+    # rename
+    names(toReturn)[1] <- "Year"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  entries_year_sum_table_3 <- reactive({
+    toReturn <- sum_of_year_df_3()
+    
+    # rename
+    names(toReturn)[1] <- "Year"
+    names(toReturn)[2] <- "Entries"
+    
+    # add comma - turns into char
+    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
+    
+    toReturn
+  })
+  
+  #################################################################
+  
+  # create a data table to show yearly data for the 
+  
+  output$entries_year_sum_table_2 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_year_sum_table_2(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$entries_year_sum_table_3 <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        entries_year_sum_table_3(),
+        options = list(
+          pageLength = 6,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  #################################################################
+  
+  # create a data table to show daily data for the year
   output$entries_year_table <- renderUI({
     # format the table layout
     div(
@@ -1430,20 +1561,26 @@ server <- function(input, output, session) {
       if (as.integer(get_col(input$time_frame_2)[1]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[1]), 
                div(plotOutput("entries_year_sum_graph_2")),
-               # div(plotOutput("entries_year_graph_2")),
-               uiOutput("entries_year_table_2")
+               uiOutput("entries_year_sum_table_2")
         )
       },
       
       if (as.integer(get_col(input$time_frame_2)[2]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[2]), 
-               div(plotOutput("entries_month_graph_2")),
-               uiOutput("entries_month_table_2")
+               div(plotOutput("entries_year_graph_2")),
+               uiOutput("entries_year_table_2")
         )
       },
       
       if (as.integer(get_col(input$time_frame_2)[3]) != 0) {
         column(as.integer(get_col(input$time_frame_2)[3]), 
+               div(plotOutput("entries_month_graph_2")),
+               uiOutput("entries_month_table_2")
+        )
+      },
+      
+      if (as.integer(get_col(input$time_frame_2)[4]) != 0) {
+        column(as.integer(get_col(input$time_frame_2)[4]), 
                div(plotOutput("entries_week_graph_2")),
                uiOutput("entries_week_table_2")
         )
@@ -1460,21 +1597,27 @@ server <- function(input, output, session) {
     fluidRow(
       if (as.integer(get_col(input$time_frame_3)[1]) != 0) {
         column(as.integer(get_col(input$time_frame_3)[1]), 
-               div(plotOutput("entries_year_sum_graph_2")),
-               # div(plotOutput("entries_year_graph_3")),
-               uiOutput("entries_year_table_3")
+               div(plotOutput("entries_year_sum_graph_3")),
+               uiOutput("entries_year_sum_table_3")
         )
       },
       
       if (as.integer(get_col(input$time_frame_3)[2]) != 0) {
         column(as.integer(get_col(input$time_frame_3)[2]), 
+               div(plotOutput("entries_year_graph_3")),
+               uiOutput("entries_year_table_3")
+        )
+      },
+      
+      if (as.integer(get_col(input$time_frame_3)[3]) != 0) {
+        column(as.integer(get_col(input$time_frame_3)[3]), 
                div(plotOutput("entries_month_graph_3")),
                uiOutput("entries_month_table_3")
         )
       },
       
-      if (as.integer(get_col(input$time_frame_3)[3]) != 0) {
-        column(as.integer(get_col(input$time_frame_3)[3]),
+      if (as.integer(get_col(input$time_frame_3)[4]) != 0) {
+        column(as.integer(get_col(input$time_frame_3)[4]),
                div(plotOutput("entries_week_graph_3")),
                uiOutput("entries_week_table_3")
         )
