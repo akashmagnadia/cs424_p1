@@ -126,9 +126,8 @@ ui <- dashboardPage(
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("", tabName = "cheapBlankSpace", icon = NULL),
                      menuItem("About", tabName = "About"),
-                     menuItem("Graph and Table", tabName = "compare_table"),
                      menuItem("Graphs and Tables", tabName = "compare_graph", selected = T),
-                     menuItem("Interesting insights",
+                     menuItem("Interesting Insights",
                               menuSubItem("Insight 1", tabName = "insight1"),
                               menuSubItem("Insight 2", tabName = "insight2"),
                               menuSubItem("Insight 3", tabName = "insight3"),
@@ -337,11 +336,12 @@ ui <- dashboardPage(
               )
       ),
       tabItem(tabName = "About",
-              h2("About Page"),
+              h1("About This Visualization"),
               h3("Project created by Akash Magnadia for CS 424"),
               h3("Data source: https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f"),
               h3("Created February 5th, 2022"),
-              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data also be filtered by a specific year between 2001 to 2021 or every year. The data can be viewed in different panels such as yearly, monthly, or weekly views. The plots can be split into a graph and a table or split into two independent plots to display CTA ridership data.")
+              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data also be filtered by a specific year between 2001 to 2021 or every year. The data can be viewed in different panels such as Daily, Yearly, Monthly, or Weekly views. The plots can be split into a graph and a table or split into two independent plots to display CTA ridership data."),
+              h3("This visualization is designed to run on a Touch-Screen wall at UIC with a ratio of 5,760 by 3,240 as per the assignment requirement.")
       )
     )
   )
@@ -366,22 +366,6 @@ server <- function(input, output, session) {
   }  
   
   #################################################################
-  
-  sum_of_year_1 <- function(year) {
-    if (input$select_station_1 != "Every") {
-      if (input$select_station_1 == "UIC-Halsted") {
-        sum(all_data_df_uic[all_data_df_uic$year == year,]$rides)
-      } else if (input$select_station_1 == "Rosemont") {
-        sum(all_data_df_rose[all_data_df_rose$year == year,]$rides)
-      } else if (input$select_station_1 == "O'Hare Airport") {
-        sum(all_data_df_ohare[all_data_df_ohare$year == year,]$rides)
-      } else {
-        sum(all_data_df[all_data_df$year == year & all_data_df$stationname == input$select_station_1,]$rides)
-      }
-    } else {
-      sum(all_data_df[all_data_df$year == year,]$rides)
-    }
-  }
   
   sum_of_year_2 <- function(year) {
     if (input$select_station_2 != "Every") {
@@ -416,28 +400,6 @@ server <- function(input, output, session) {
   }
   
   #################################################################
-  
-  sum_of_month_1 <- function(month) {
-    if (input$select_year_1 != "Every") {
-      if (input$select_station_1 != "Every") {
-        
-        if (input$select_station_1 == "UIC-Halsted") {
-          sum(all_data_df_uic[all_data_df_uic$month == month & all_data_df_uic$year == input$select_year_1,]$rides)
-        } else if (input$select_station_1 == "Rosemont") {
-          sum(all_data_df_rose[all_data_df_rose$month == month & all_data_df_rose$year == input$select_year_1,]$rides)
-        } else if (input$select_station_1 == "O'Hare Airport") {
-          sum(all_data_df_ohare[all_data_df_ohare$month == month & all_data_df_ohare$year == input$select_year_1,]$rides)
-        } else {
-          sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
-        }
-        
-      } else {
-        sum(all_data_df[all_data_df$month == month & all_data_df$year == input$select_year_1,]$rides)
-      }
-    } else {
-      sum(all_data_df[all_data_df$month == month,]$rides)
-    }
-  }
   
   sum_of_month_2 <- function(month) {
     if (input$select_year_2 != "Every") {
@@ -484,28 +446,6 @@ server <- function(input, output, session) {
   }
   
   #################################################################
-  
-  sum_of_week_1 <- function(day) {
-    if (input$select_year_1 != "Every") {
-      if (input$select_station_1 != "Every") {
-        
-        if (input$select_station_1 == "UIC-Halsted") {
-          sum(all_data_df_uic[all_data_df_uic$day == day & all_data_df_uic$year == input$select_year_1,]$rides)
-        } else if (input$select_station_1 == "Rosemont") {
-          sum(all_data_df_rose[all_data_df_rose$day == day & all_data_df_rose$year == input$select_year_1,]$rides)
-        } else if (input$select_station_1 == "O'Hare Airport") {
-          sum(all_data_df_ohare[all_data_df_ohare$day == day & all_data_df_ohare$year == input$select_year_1,]$rides)
-        } else {
-          sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_1 & all_data_df$stationname == input$select_station_1,]$rides)
-        }
-        
-      } else {
-        sum(all_data_df[all_data_df$day == day & all_data_df$year == input$select_year_1,]$rides)
-      }
-    } else {
-      sum(all_data_df[all_data_df$day == day,]$rides)
-    }
-  }
   
   sum_of_week_2 <- function(day) {
     if (input$select_year_2 != "Every") {
@@ -644,19 +584,6 @@ server <- function(input, output, session) {
   #################################################################
   # create sum of each month of the year
   
-  sum_of_month_df_1 <- reactive({
-    month <- 1:12
-    rides <- array(unlist(
-      lapply(1:12, 
-             sum_of_month_1)
-    )
-    )
-    
-    toReturn <- data.frame(month, rides)
-    toReturn <- add_monthChar(toReturn)
-    toReturn
-  })
-  
   sum_of_month_df_2 <- reactive({
     month <- 1:12
     rides <- array(unlist(
@@ -685,19 +612,6 @@ server <- function(input, output, session) {
   
   #################################################################
   # create sum of each day of week
-  
-  sum_of_week_df_1 <- reactive({
-    day <- 1:7
-    rides <- array(unlist(
-      lapply(1:7, 
-             sum_of_week_1)
-    )
-    )
-    
-    toReturn <- data.frame(day, rides)
-    toReturn <- add_dayToDayChar(toReturn)
-    toReturn
-  })
   
   sum_of_week_df_2 <- reactive({
     day <- 1:7
@@ -728,42 +642,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create reactive dataframe for year
-  
-  year_df_1 <- reactive({
-    if (input$select_station_1 != "Every") {
-      if (input$select_year_1 != "Every") {
-        
-        if (input$select_station_1 == "UIC-Halsted") {
-          subset(all_data_df_uic, all_data_df_uic$year == input$select_year_1)
-        } else if (input$select_station_1 == "Rosemont") {
-          subset(all_data_df_rose, all_data_df_rose$year == input$select_year_1)
-        } else if (input$select_station_1 == "O'Hare Airport") {
-          subset(all_data_df_ohare, all_data_df_ohare$year == input$select_year_1)
-        } else {
-          subset(all_data_df, all_data_df$stationname == input$select_station_1 & all_data_df$year == input$select_year_1)
-        }
-        
-      } else {
-        
-        if (input$select_station_1 == "UIC-Halsted") {
-          all_data_df_uic
-        } else if (input$select_station_1 == "Rosemont") {
-          all_data_df_rose
-        } else if (input$select_station_1 == "O'Hare Airport") {
-          all_data_df_ohare
-        } else {
-          subset(all_data_df, all_data_df$stationname == input$select_station_1)
-        }
-        
-      }
-    } else {
-      if (input$select_year_1 != "Every") {
-        subset(all_data_df, all_data_df$year == input$select_year_1)
-      } else {
-        all_data_df
-      }
-    }
-  })
   
   year_df_2 <- reactive({
     if (input$select_station_2 != "Every") {
@@ -841,17 +719,6 @@ server <- function(input, output, session) {
   
   # create reactive dataframe for sum of year
   
-  sum_of_year_df_1 <- reactive({
-    year <- 2001:2021
-    rides <- array(unlist(
-      lapply(2001:2021, 
-             sum_of_year_1)
-    )
-    )
-    
-    data.frame(year, rides)
-  })
-  
   sum_of_year_df_2 <- reactive({
     year <- 2001:2021
     rides <- array(unlist(
@@ -910,16 +777,6 @@ server <- function(input, output, session) {
   
   # create graph to show daily data for the year
   
-  output$entries_year_graph_1 <- renderPlot({
-    ggplot(data = year_df_1(), aes(x = newDate, y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_1)) +
-      scale_x_date(breaks = scales::pretty_breaks(n = 5)) +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
-      labs(x = "Year",
-           y = "Entries") +
-      ggtitle(paste("Yearly Entries at", select_station_1))
-  })
-  
   output$entries_year_graph_2 <- renderPlot({
     ggplot(data = year_df_2(), aes(x = newDate, y = rides)) + 
       geom_bar(stat = 'identity', aes(fill = rides), fill = getGradientCol(input$select_station_2)) +
@@ -945,19 +802,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create graph to show monthly data
-  
-  output$entries_month_graph_1 <- renderPlot({
-    ggplot(data = sum_of_month_df_1(), aes(x = reorder(monthChar, month), y = rides)) + 
-      geom_bar(stat = 'identity', aes(fill = rides)) +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = comma) +
-      labs(x = "Month",
-           y = "Entries") +
-      ggtitle(paste("Monthly Entries at", input$select_station_1)) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_1), 
-                           midpoint = median(0)) +
-      theme(legend.position = "none")
-  })
   
   output$entries_month_graph_2 <- renderPlot({
     ggplot(data = sum_of_month_df_2(), aes(x = reorder(monthChar, month), y = rides)) + 
@@ -989,19 +833,6 @@ server <- function(input, output, session) {
   
   # create graph to show weekly data
   
-  output$entries_week_graph_1 <- renderPlot({
-    ggplot(data = sum_of_week_df_1(), aes(x = reorder(dayChar, day), y = rides)) +
-      geom_bar(stat = 'identity', aes(fill = rides)) +
-      scale_y_continuous(labels = comma) +
-      labs(x = "Day",
-           y = "Entries") +
-      ggtitle(paste("Day of the week Entries at", input$select_station_1)) +
-      scale_fill_gradient2(low = "white", 
-                           high = getGradientCol(input$select_station_1), 
-                           midpoint = median(0)) +
-      theme(legend.position = "none")
-  })
-  
   output$entries_week_graph_2 <- renderPlot({
     ggplot(data = sum_of_week_df_2(), aes(x = reorder(dayChar, day), y = rides)) +
       geom_bar(stat = 'identity', aes(fill = rides)) +
@@ -1031,22 +862,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create new Data frame to show yearly data
-  
-  entries_year_table <- reactive({
-    toReturn <- year_df_1()
-    keep <- c("stationname", "newDate", "ridesChar")
-    toReturn <- toReturn[keep]
-    
-    # rename
-    names(toReturn)[1] <- "Station"
-    names(toReturn)[2] <- "Date"
-    names(toReturn)[3] <- "Entries"
-    
-    # add comma - turns into char
-    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
-    
-    toReturn
-  })
   
   entries_year_table_2 <- reactive({
     toReturn <- year_df_2()
@@ -1083,20 +898,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create new Data frame to show monthly data
-  entries_month_table <- reactive({
-    toReturn <- sum_of_month_df_1()
-    keep <- c("monthChar", "rides")
-    toReturn <- toReturn[keep]
-    
-    # rename
-    names(toReturn)[1] <- "Month"
-    names(toReturn)[2] <- "Entries"
-    
-    # add comma - turns into char
-    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
-    
-    toReturn
-  })
   
   entries_month_table_2 <- reactive({
     toReturn <- sum_of_month_df_2()
@@ -1131,20 +932,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create new Data frame to show weekly data
-  entries_week_table <- reactive({
-    toReturn <- sum_of_week_df_1()
-    keep <- c("dayChar", "rides")
-    toReturn <- toReturn[keep]
-    
-    # rename
-    names(toReturn)[1] <- "Day"
-    names(toReturn)[2] <- "Entries"
-    
-    # add comma - turns into char
-    toReturn$Entries <- formatC(toReturn$Entries, format = "d", big.mark = ",")
-    
-    toReturn
-  })
   
   entries_week_table_2 <- reactive({
     toReturn <- sum_of_week_df_2()
@@ -1267,34 +1054,14 @@ server <- function(input, output, session) {
   #################################################################
   
   # create a data table to show daily data for the year
-  output$entries_year_table <- renderUI({
-    # format the table layout
-    div(
-      tags$head(
-        tags$style(
-          HTML('
-          .datatables {
-            height: unset !important;
-            width: inherit !important;
-          }
-           ')
-        )
-      ),
-      
-      datatable(
-        entries_year_table(),
-        options = list(
-          pageLength = 6,
-          scrollX = TRUE,
-          dom = 'tp',
-          columnDefs = list(list(className = 'dt-center', targets = "_all"))
-        ),
-        rownames = FALSE
-      )
-    )
-  })
   
   output$entries_year_table_2 <- renderUI({
+    page_Length <- 6
+    
+    if (input$select_station_2 == "Every" & length(input$time_frame_2) > 3) {
+      page_Length <- 3
+    }
+    
     # format the table layout
     div(
       tags$head(
@@ -1311,7 +1078,7 @@ server <- function(input, output, session) {
       datatable(
         entries_year_table_2(),
         options = list(
-          pageLength = 6,
+          pageLength = page_Length,
           scrollX = TRUE,
           dom = 'tp',
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
@@ -1322,6 +1089,12 @@ server <- function(input, output, session) {
   })
   
   output$entries_year_table_3 <- renderUI({
+    page_Length <- 6
+    
+    if (input$select_station_3 == "Every" & length(input$time_frame_3) > 3) {
+      page_Length <- 3
+    }
+    
     # format the table layout
     div(
       tags$head(
@@ -1338,7 +1111,7 @@ server <- function(input, output, session) {
       datatable(
         entries_year_table_3(),
         options = list(
-          pageLength = 6,
+          pageLength = page_Length,
           lengthChange = FALSE,
           scrollX = TRUE,
           dom = 'tp',
@@ -1352,32 +1125,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create a data table to show monthly data
-  output$entries_month_table <- renderUI({
-    # format the table layout
-    div(
-      tags$head(
-        tags$style(
-          HTML('
-          .datatables {
-            height: unset !important;
-            width: inherit !important;
-          }
-           ')
-        )
-      ),
-      
-      datatable(
-        entries_month_table(),
-        options = list(
-          pageLength = 6,
-          scrollX = TRUE,
-          dom = 'tp',
-          columnDefs = list(list(className = 'dt-center', targets = "_all"))
-        ),
-        rownames = FALSE
-      )
-    )
-  })
   
   output$entries_month_table_2 <- renderUI({
     # format the table layout
@@ -1436,32 +1183,6 @@ server <- function(input, output, session) {
   #################################################################
   
   # create a data table to show weekly data
-  output$entries_week_table <- renderUI({
-    # format the table layout
-    div(
-      tags$head(
-        tags$style(
-          HTML('
-          .datatables {
-            height: unset !important;
-            width: inherit !important;
-          }
-           ')
-        )
-      ),
-      
-      datatable(
-        entries_week_table(),
-        options = list(
-          pageLength = 6,
-          scrollX = TRUE,
-          dom = 'tp',
-          columnDefs = list(list(className = 'dt-center', targets = "_all"))
-        ),
-        rownames = FALSE
-      )
-    )
-  })
   
   output$entries_week_table_2 <- renderUI({
     # format the table layout
@@ -1518,37 +1239,6 @@ server <- function(input, output, session) {
   })
   
   #################################################################
-  
-  # render plot and table
-  output$plot_and_table <- renderUI({
-    validate(
-      need(input$time_frame_1, 'Check at least one Time Frame!')
-    )
-    
-    # put three plots in a row
-    fluidRow(
-      if (as.integer(get_col(input$time_frame_1)[1]) != 0) {
-        column(as.integer(get_col(input$time_frame_1)[1]), 
-               div(plotOutput("entries_year_graph_1")),
-               uiOutput("entries_year_table")
-        )
-      },
-      
-      if (as.integer(get_col(input$time_frame_1)[2]) != 0) {
-        column(as.integer(get_col(input$time_frame_1)[2]), 
-               div(plotOutput("entries_month_graph_1")),
-               uiOutput("entries_month_table")
-        )
-      },
-      
-      if (as.integer(get_col(input$time_frame_1)[3]) != 0) {
-        column(as.integer(get_col(input$time_frame_1)[3]), 
-               div(plotOutput("entries_week_graph_1")),
-               uiOutput("entries_week_table")
-        )
-      }
-    )
-  })
   
   # render two plots
   output$plot_and_plot_1 <- renderUI({
@@ -1628,30 +1318,39 @@ server <- function(input, output, session) {
   observeEvent(input$tabs, {
     
     if (input$tabs == "insight1") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2021)
-      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Week"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2021)
+      updateSelectInput(session, 'select_year_3', selected = "Every")
+      updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
+      updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Weekly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Weekly"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight2") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2021)
-      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2021)
+      updateSelectInput(session, 'select_year_3', selected = 2021)
+      updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
+      updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Monthly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Daily"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight3") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2020)
-      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2020)
+      updateSelectInput(session, 'select_year_3', selected = 2020)
+      updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
+      updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Monthly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Daily"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
@@ -1663,8 +1362,8 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_3', selected = 2020)
       updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
       updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
-      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Month"))
-      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Month"))
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Monthly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Monthly"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
@@ -1676,28 +1375,34 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_3', selected = 2020)
       updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
       updateSelectInput(session, 'select_station_3', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Month"))
-      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Month"))
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Monthly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Monthly"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight6") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = "Every")
-      updateSelectInput(session, 'select_station_1', selected = "Rosemont")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = "Every")
+      updateSelectInput(session, 'select_year_3', selected = "Every")
+      updateSelectInput(session, 'select_station_2', selected = "Rosemont")
+      updateSelectInput(session, 'select_station_3', selected = "Rosemont")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Yearly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Daily"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight7") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2016)
-      updateSelectInput(session, 'select_station_1', selected = "Every")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2016)
+      updateSelectInput(session, 'select_year_3', selected = 2016)
+      updateSelectInput(session, 'select_station_2', selected = "Every")
+      updateSelectInput(session, 'select_station_3', selected = "Every")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Daily"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Monthly"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
@@ -1709,28 +1414,34 @@ server <- function(input, output, session) {
       updateSelectInput(session, 'select_year_3', selected = 2002)
       updateSelectInput(session, 'select_station_2', selected = "O'Hare Airport")
       updateSelectInput(session, 'select_station_3', selected = "O'Hare Airport")
-      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Year"))
-      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Year"))
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Daily"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Daily"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight9") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2018)
-      updateSelectInput(session, 'select_station_1', selected = "UIC-Halsted")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Month"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2018)
+      updateSelectInput(session, 'select_year_3', selected = 2018)
+      updateSelectInput(session, 'select_station_2', selected = "UIC-Halsted")
+      updateSelectInput(session, 'select_station_3', selected = "UIC-Halsted")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Monthly"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Daily"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
     }
     
     if (input$tabs == "insight10") {
-      updateTabItems(session, 'tabs', 'compare_table')
-      updateSelectInput(session, 'select_year_1', selected = 2008)
-      updateSelectInput(session, 'select_station_1', selected = "Every")
-      updateCheckboxGroupInput(session, 'time_frame_1', selected = c("Year", "Month"))
+      updateTabItems(session, 'tabs', 'compare_graph')
+      updateSelectInput(session, 'select_year_2', selected = 2008)
+      updateSelectInput(session, 'select_year_3', selected = 2008)
+      updateSelectInput(session, 'select_station_2', selected = "Every")
+      updateSelectInput(session, 'select_station_3', selected = "Every")
+      updateCheckboxGroupInput(session, 'time_frame_2', selected = c("Daily"))
+      updateCheckboxGroupInput(session, 'time_frame_3', selected = c("Monthly"))
       
       hideAllDesc()
       shinyjs::show(id = input$tabs)
