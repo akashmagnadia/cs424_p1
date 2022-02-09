@@ -340,7 +340,7 @@ ui <- dashboardPage(
               h3("Project created by Akash Magnadia for CS 424"),
               h3("Data source: https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f"),
               h3("Created February 5th, 2022"),
-              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data also be filtered by a specific year between 2001 to 2021 or every year. The data can be viewed in different panels such as Daily, Yearly, Monthly, or Weekly views. The plots can be split into a graph and a table or split into two independent plots to display CTA ridership data."),
+              h3("The intention for creating this visualization is to display ridership data in an easy-to-understand fashion. In this visualization, you can set the station location to one or every station in the CTA train network. The data also be filtered by a specific year between 2001 to 2021 or every year. The data can be viewed in different panels such as Daily, Yearly, Monthly, or Weekly views. The main body of the visualization can be two portions, each portion consisting of a graph and a corresponding data for the plot in a table to display CTA ridership data."),
               h3("This visualization is designed to run on a Touch-Screen wall at UIC with a ratio of 5,760 by 3,240 as per the assignment requirement.")
       )
     )
