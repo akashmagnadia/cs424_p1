@@ -1070,12 +1070,6 @@ server <- function(input, output, session) {
   # create a data table to show daily data for the year
   
   output$entries_year_table_2 <- renderUI({
-    page_Length <- 6
-    
-    if (input$select_station_2 == "Every" & length(input$time_frame_2) > 3) {
-      page_Length <- 3
-    }
-    
     # format the table layout
     div(
       tags$head(
@@ -1092,7 +1086,7 @@ server <- function(input, output, session) {
       datatable(
         entries_year_table_2(),
         options = list(
-          pageLength = page_Length,
+          pageLength = 6,
           scrollX = TRUE,
           dom = 'tp',
           columnDefs = list(list(className = 'dt-center', targets = "_all"))
@@ -1103,12 +1097,6 @@ server <- function(input, output, session) {
   })
   
   output$entries_year_table_3 <- renderUI({
-    page_Length <- 6
-    
-    if (input$select_station_3 == "Every" & length(input$time_frame_3) > 3) {
-      page_Length <- 3
-    }
-    
     # format the table layout
     div(
       tags$head(
@@ -1125,7 +1113,7 @@ server <- function(input, output, session) {
       datatable(
         entries_year_table_3(),
         options = list(
-          pageLength = page_Length,
+          pageLength = 6,
           lengthChange = FALSE,
           scrollX = TRUE,
           dom = 'tp',
